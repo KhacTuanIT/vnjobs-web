@@ -2,7 +2,7 @@ import DetailPage from "./pages/DetailPage";
 import HomePage from "./pages/HomePage";
 import SigninPage from "./pages/SigninPage";
 import SignupPage from "./pages/SignupPage";
-
+import JobsPage from './pages/JobsPage';
 
 const routes = [
     {
@@ -24,6 +24,11 @@ const routes = [
         path: '/sign-up',
         exact: true,
         main: () => <SignupPage />
+    },
+    {
+        path: '/jobs',
+        exact: true,
+        main: () => <JobsPage />
     }
 ];
 
