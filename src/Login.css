@@ -11038,11 +11038,11 @@ h5,
 }
 
 .form-group .label {
-    font-size: 12px;
+    font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 1px;
     color: #09333f;
-    font-weight: 700;
+    font-weight: bold;
 }
 
 .form-group a {
