@@ -1,7 +1,6 @@
 import React, { } from 'react';
 import { ReactComponent as RegisterSVG } from '../../assets/svg/businessman-standing-with-a-suitcase.svg';
 
-
 const index = () => {
     return (
         <section className="ftco-section">

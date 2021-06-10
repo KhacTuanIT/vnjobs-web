@@ -90,7 +90,6 @@ const SignIn = () => {
     }, [isLogged]);
 
     if (isLogged) return <Redirect to="/" />
-
     return (
         <section className="ftco-section">
             <div className="container">
@@ -151,6 +150,5 @@ const SignIn = () => {
             </div>
         </section>
     );
-
 }
 export default SignIn;
