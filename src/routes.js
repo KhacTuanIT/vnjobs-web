@@ -1,4 +1,4 @@
-import DetailPage from "./pages/DetailPage";
+import DetailPage from "./pages/DetailPage/index";
 import HomePage from "./pages/HomePage/index";
 import SigninPage from "./pages/SigninPage";
 import SignupPage from "./pages/SignupPage";

@@ -1,32 +1,114 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import * as API from '../../constants/Config';
 
-const index = () => {
-    return (
+const DetailPage = (props) => {
+    const [jobDetail, setJobDetail] = useState(null);
+    const [major, setMajor] = useState(null);
+    const [org, setOrg] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const url = props.match.url;
+    const arrUrl = url.split('/');
+    const idItem = arrUrl[arrUrl.length-1];
+    useEffect(() => {
+        console.log(`${API.API}${API.RECRUITMENT_NEWS}/${idItem}`);
+        async function getJobDetail() {
+            if (jobDetail === null) {
+                console.log("Start get data");
+                setIsLoading(true);
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+                const endpoint = API.API + API.RECRUITMENT_NEWS + '/' + idItem;
+                const pl = await axios.get(endpoint);
+                
+                console.log("Getting data");
+                const data= pl.data;
+                if (data) {
+                    if (!major) {
+                        const ep = API.API + API.MAJOR + '/' + data.major_id;
+                        const mpl = await axios.get(ep);
+                        const majorData = mpl.data;
+                        setMajor(majorData);
+                    }
+                    
+                    if (!org) {
+                        const ep = API.API + API.ORGANIZATION + '/' + data.org_id;
+                        const opl = await axios.get(ep);
+                        const orgData = opl.data;
+                        setOrg(orgData);
+                    }
+                }
+                setJobDetail(data);
+                setIsLoading(false);
+                console.log("End get data");
+                window.scrollTo(0, 0);
+            }
+        }
+
+        return getJobDetail();
+        // return GetJobDetail();
+    }, []);
+
+    const convertDatetime = (datetime) => {
+        const month = [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'
+        ]
+
+        let dateStr = datetime.split(' ')[0].toString();
+        let dateParts = dateStr.split('-');
+        var jsDate = month[parseInt(dateParts[1])] + ' ' + dateParts[2] + ', ' + dateParts[0];
+        return jsDate;
+    }
+    
+    return isLoading ? 
+        <div className="d-flex justify-content-center loading-wr">
+            <div className="spinner-grow" role="status mr-3">
+                <span className="sr-only">Loading...</span>
+            </div>
+            <div className="spinner-grow" role="status mr-3">
+                <span className="sr-only">Loading...</span>
+            </div>
+            <div className="spinner-grow" role="status mr-3">
+                <span className="sr-only">Loading...</span>
+            </div>
+        </div> : (
         <div>
             <div className="detail-wrapper container-fluid">
                 <div className="container">
-                    <div className="job-title">Job title</div>
-                    <div className="company">Company</div>
-                    <div className="city">Ha noi</div>
+                    <div className="job-title">{jobDetail ? jobDetail.title : null}</div>
+                    <div className="company">{org ? org.org_name : null}</div>
+                    <div className="city">{jobDetail ? jobDetail.city : null}</div>
                     <div className="desc-content">
                         <div className="salary-content row">
-                            <div className="col-sm-2">Salary</div>:Negotiative</div>
+                            <div className="col-sm-2">Salary</div>: Negotiative</div>
                         <div className="major-content row">
-                            <div className="col-sm-2">Major</div>:IT</div>
+                            <div className="col-sm-2">Major</div>: {major ? major.major_name : null}</div>
                         <div className="work-type-content row">
-                            <div className="col-sm-2">Type</div>:Full-time</div>
+                            <div className="col-sm-2">Type</div>: {jobDetail ? jobDetail.work_type : null}</div>
                         <div className="address-content row">
-                            <div className="col-sm-2">Address</div>:address</div>
+                            <div className="col-sm-2">Address</div>: {jobDetail ? jobDetail.address : null}</div>
                         <div className="time-left-content row">
-                            <div className="col-sm-2">Time left</div>:From 21/1 - 21/2</div>
+                            <div className="col-sm-2">Time left</div>: From {jobDetail !== null ? convertDatetime(jobDetail.start_time) : null} - {jobDetail !== null ? convertDatetime(jobDetail.end_time) : null}</div>
                     </div>
                     <div className="detail-content">
                         <div className="detail-content-title">
                             Job description
                         </div>
                         <div className="dc-content">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae laboriosam itaque, reiciendis distinctio eum eligendi ut in esse omnis magnam voluptatibus eaque possimus harum sapiente totam nam repellat dolor similique!
+                            {jobDetail ? jobDetail.content : null}
                         </div>
                     </div>
                     <div className="interview-time">
@@ -34,7 +116,7 @@ const index = () => {
                             Interview time
                         </div>
                         <div className="it-content">
-                            From .... - ....
+                            From {jobDetail !== null ? convertDatetime(jobDetail.interview_start_time) : null} - {jobDetail !== null ? convertDatetime(jobDetail.interview_end_time) : null}
                         </div>
                     </div>
                 </div>
@@ -71,4 +153,4 @@ const index = () => {
     );
 }
 
-export default index;
+export default DetailPage;

@@ -58,7 +58,7 @@ const HomePage = () => {
                         job.data !== undefined ?
                         job.data.length > 0 ? 
                         job.data.map((e, i) => {
-                            return <NavLink key={e.id} to={`/job-detail/${e.id}`} className="link-item">
+                            return <NavLink key={e.id} to={{pathname: `/job-detail/${e.id}`, idItem: e.id}} className="link-item">
                             <div className="job-item">
                                 <div className="title-job-item">
                                     <img src="images/logo_official.png" />

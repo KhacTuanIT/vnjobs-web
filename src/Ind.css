@@ -441,3 +441,8 @@ body,
     color: #ffffff;
     padding-top: 2.5rem;
 }
+
+.loading-wr {
+    height: 400px;
+    align-items: center;
+}

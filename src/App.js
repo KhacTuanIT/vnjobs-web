@@ -20,28 +20,15 @@ function App() {
     }
     return <Switch>{result}</Switch>;
   }
-  
-  let url = window.location.pathname;
-  console.log(url);
-
-  const showNav = () => {
-    if (!url.includes('/sign-in') && !url.includes('/sign-up')) 
-      return <Navbar />;
-  }
-
-  const showFooter = () => {
-    if (!url.includes('/sign-in') && !url.includes('/sign-up')) 
-      return <Footer />;
-  }
 
   return (
     <Router>
       <div className="App">
         
         <div className='container-fluid p-0'>
-          {showNav()}
+          <Navbar />
           {showContentMenus(routes)}
-          {showFooter()}
+          <Footer />
         </div>
       </div>
     </Router>
