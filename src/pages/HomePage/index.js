@@ -1,10 +1,24 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import {NavLink} from 'react-router-dom';
+import {NavLink, Redirect} from 'react-router-dom';
 import '../../Ind.css';
+import axios from 'axios';
+import * as API from '../../constants/Config';
 
-const index = () => {
-    return (
+const HomePage = () => {
+
+    const [job, setJob] = useState([]);
+
+    useEffect(() => {
+        const getJob = async () => {
+            const payload = await axios.get(`${API.API}${API.RECRUITMENT_NEWS}`);
+            setJob(payload.data);
+            return payload.data;
+        }
+        console.log(getJob());
+    }, [])
+
+    return (    
     <div>
         <div className="container-fluid">
             <div className="introduce-content container">
@@ -40,32 +54,77 @@ const index = () => {
                     Danh sách tuyển dụng mới nhất
                 </div>
                 <div className="content-lbc">
-                    <NavLink to="#" className="link-item">
-                        <div className="job-item">
-                            <div className="title-job-item">
-                                <img src="images/logo_official.png" />
-                                <div className="company-name">Google</div>
-                            </div>
-                            <div className="right-content">
-                                <div className="desc">
-                                    <div className="desc-item salary">Negotiative</div>
-                                    <div className="desc-item major">IT</div>
-                                    <div className="desc-item type-work">Full-time</div>
+                    {
+                        job.data !== undefined ?
+                        job.data.length > 0 ? 
+                        job.data.map((e, i) => {
+                            return <NavLink key={e.id} to={`/job-detail/${e.id}`} className="link-item">
+                            <div className="job-item">
+                                <div className="title-job-item">
+                                    <img src="images/logo_official.png" />
+                                    <div className="company-name">Google</div>
                                 </div>
-                                <div className="rc-content">
-                                    <div className="title-text col-sm-6 p-0">Job title</div>
-                                    <div className="content-button col-sm-6 justify-content-end p-0">
-                                        <NavLink to="#" className="btn-t btn-link-app">APPLY</NavLink>
+                                <div className="right-content">
+                                    <div className="desc">
+                                        <div className="desc-item salary">Negotiative</div>
+                                        <div className="desc-item major">IT</div>
+                                        <div className="desc-item type-work">Full-time</div>
                                     </div>
+                                    <div className="rc-content">
+                                        <div className="title-text col-sm-6 p-0">Job title</div>
+                                        <div className="content-button col-sm-6 justify-content-end p-0">
+                                            <NavLink to={`/job-detail/${e.id}`} className="btn-t btn-link-app">APPLY</NavLink>
+                                        </div>
+                                    </div>
+                                    <div className="time-left">2 days left</div>
                                 </div>
-                                <div className="time-left">2 days left</div>
+                            </div>
+                        </NavLink>
+                        }) :
+                        <div className="d-flex justify-content-center flex-row">
+                            <div class="err">4</div>
+                            <div className="f"><i class="far fa-question-circle fa-spin"></i></div>
+                            <div class="err2">4</div>
+                        </div>
+                        : <div className="d-flex justify-content-center">
+                            <div className="spinner-grow" role="status mr-3">
+                                <span className="sr-only">Loading...</span>
+                            </div>
+                            <div className="spinner-grow" role="status mr-3">
+                                <span className="sr-only">Loading...</span>
+                            </div>
+                            <div className="spinner-grow" role="status mr-3">
+                                <span className="sr-only">Loading...</span>
                             </div>
                         </div>
-                    </NavLink>
+                    }
+                    {
+                        job.data !== undefined ?
+                        job.data.length > 0 ?
+                        <div className="d-flex justify-content-end pr-3">
+                            <nav aria-label="Page navigation example">
+                                <ul className="pagination">
+                                    {
+                                        job.prev_page_url !== null ? 
+                                        <li className="page-item"><NavLink className="page-link" to="/">Previous</NavLink></li>
+                                        : <li className="page-item disabled"><NavLink className="page-link" aria-disabled="true" to="#">Previous</NavLink></li>
+                                    }
+                                    {
+                                        job.next_page_url !== null ?
+                                        <li className="page-item"><NavLink className="page-link" to="/">Next</NavLink></li>
+                                        : <li className="page-item disabled"><NavLink className="page-link" aria-disabled="true" to="#">Next</NavLink></li>
+                                    }
+                                    
+                                </ul>
+                            </nav>
+                        </div>
+                        : null : null
+                    }
+                    
                 </div>
             </div>
         </div>
     </div>)
 }
 
-export default index;
+export default HomePage;
