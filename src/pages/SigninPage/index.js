@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import '../../Login.css';
 import { ReactComponent as LoginSVG } from '../../assets/svg/worker-in-front-of-a-computer-monitor.svg';
-import ErrorAuthenticateNotify from '../../components/ErrorAuthenticateNotify';
+import AuthenticateNotify from '../../components/AuthenticateNotify';
 import axios from 'axios';
 import * as API from '../../constants/API';
 import { Redirect } from 'react-router-dom';
+import useLocalStorage from '../../utils/useLocalStorage';
 
 const SignIn = () => {
     const [email, setEmail] = useState("");
@@ -12,6 +13,7 @@ const SignIn = () => {
     const [data, setData] = useState([]);
     const [msgError, setMsgError] = useState("");
     const [isLogged, setIsLogged] = useState(false);
+    const [localLoginStatus, setLocalLoginStatus] = useLocalStorage("is_logged", false);
 
 
     const validateInfo = () => {
@@ -33,6 +35,7 @@ const SignIn = () => {
             }, { withCredentials: true })
                 .then(async function (response) {
                     if (response.status == 200) {
+                        setLocalLoginStatus(true);
                         setIsLogged(true);
                     }
                 })
@@ -72,24 +75,29 @@ const SignIn = () => {
         console.log("RUNNED");
         const cancelTokenSource = axios.CancelToken.source();
 
-        axios.post(API.CHECK_VALID_TOKEN, null,
-            {
-                withCredentials: true,
-                cancelToken: cancelTokenSource.token
-            })
-            .then(async function (response) {
-                if (response.status == 200) {
-                    console.log(" HAHAHAHAHA SUCCESS | NEED NAV LINK TO HOME");
-                    setIsLogged(true);
-                }
-            })
-            .catch(function (error) {
-                console.log("Still do not signed in");
-            });
+        console.log("hi");
+        console.log(localLoginStatus);
+        if (!localLoginStatus) {
+            axios.post(API.CHECK_VALID_TOKEN, null,
+                {
+                    withCredentials: true,
+                    cancelToken: cancelTokenSource.token
+                })
+                .then(async function (response) {
+                    if (response.status == 200) {
+                        console.log(" HAHAHAHAHA SUCCESS | NEED NAV LINK TO HOME");
+                        setIsLogged(true);
+                        setLocalLoginStatus(true);
+                    }
+                })
+                .catch(function (error) {
+                    console.log("Still do not signed in");
+                });
+        }
         return () => cancelTokenSource.cancel();
     }, [isLogged]);
 
-    if (isLogged) return <Redirect to="/" />
+    if (localLoginStatus) return <Redirect to="/" />
     return (
         <section className="ftco-section">
             <div className="container">
@@ -118,7 +126,7 @@ const SignIn = () => {
                                 </div>
                                 <form action="#" className="signin-form">
                                     <div className="form-group mb-3">
-                                        <ErrorAuthenticateNotify msg={msgError} />
+                                        <AuthenticateNotify msg={msgError} />
                                         <label className="label" for="name">Email</label>
                                         <input type="text" className="form-control" value={email} onChange={(e) => { setEmail(e.target.value) }} placeholder="Email" required />
                                     </div>
