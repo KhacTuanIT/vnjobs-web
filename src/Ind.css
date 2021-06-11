@@ -424,3 +424,25 @@ body,
     background-color: rgba(92, 228, 188, .2);
 }
 
+.err {
+    color: #ffffff;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 11rem;
+}
+
+.err2 {
+    color: #ffffff;
+    font-family: 'Nunito Sans', sans-serif;
+    font-size: 11rem;
+}
+
+.f {
+    font-size: 8.5rem;
+    color: #ffffff;
+    padding-top: 2.5rem;
+}
+
+.loading-wr {
+    height: 400px;
+    align-items: center;
+}
