@@ -1,5 +1,5 @@
-const DOMAIN = 'https://api.vnjob.work';
-// const DOMAIN = 'http://127.0.0.1:8000' // Localhost Only | NOT USING FOR PRODUCTION !!
+// const DOMAIN = 'https://api.vnjob.work';
+const DOMAIN = 'http://127.0.0.1:8000' // Localhost Only | NOT USING FOR PRODUCTION !!
 // const DOMAIN = 'http://5102b978fc38.jp.ngrok.io';
 const VERSION_API = '/api/v1/';
 const API = DOMAIN + VERSION_API;

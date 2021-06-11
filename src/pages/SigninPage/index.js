@@ -5,6 +5,8 @@ import ErrorAuthenticateNotify from '../../components/ErrorAuthenticateNotify';
 import axios from 'axios';
 import * as API from '../../constants/API';
 import { Redirect } from 'react-router-dom';
+// import useLocalStorage from 'uselocalstorage-react-hook';
+import useLocalStorage from '../../utils/useLocalStorage';
 
 const SignIn = () => {
     const [email, setEmail] = useState("");
@@ -12,6 +14,7 @@ const SignIn = () => {
     const [data, setData] = useState([]);
     const [msgError, setMsgError] = useState("");
     const [isLogged, setIsLogged] = useState(false);
+    const [localLoginStatus, setLocalLoginStatus] = useLocalStorage("is_login", false);
 
 
     const validateInfo = () => {
@@ -33,6 +36,7 @@ const SignIn = () => {
             }, { withCredentials: true })
                 .then(async function (response) {
                     if (response.status == 200) {
+                        setLocalLoginStatus(true);
                         setIsLogged(true);
                     }
                 })
@@ -68,28 +72,31 @@ const SignIn = () => {
         }
     }
 
-    useEffect(() => {
-        console.log("RUNNED");
-        const cancelTokenSource = axios.CancelToken.source();
+    // useEffect(() => {
+    //     console.log("RUNNED");
+    //     const cancelTokenSource = axios.CancelToken.source();
 
-        axios.post(API.CHECK_VALID_TOKEN, null,
-            {
-                withCredentials: true,
-                cancelToken: cancelTokenSource.token
-            })
-            .then(async function (response) {
-                if (response.status == 200) {
-                    console.log(" HAHAHAHAHA SUCCESS | NEED NAV LINK TO HOME");
-                    setIsLogged(true);
-                }
-            })
-            .catch(function (error) {
-                console.log("Still do not signed in");
-            });
-        return () => cancelTokenSource.cancel();
-    }, [isLogged]);
+    //     console.log("hi");
+    //     console.log(localLoginStatus);
 
-    if (isLogged) return <Redirect to="/" />
+    //     axios.post(API.CHECK_VALID_TOKEN, null,
+    //         {
+    //             withCredentials: true,
+    //             cancelToken: cancelTokenSource.token
+    //         })
+    //         .then(async function (response) {
+    //             if (response.status == 200) {
+    //                 console.log(" HAHAHAHAHA SUCCESS | NEED NAV LINK TO HOME");
+    //                 setIsLogged(true);
+    //             }
+    //         })
+    //         .catch(function (error) {
+    //             console.log("Still do not signed in");
+    //         });
+    //     return () => cancelTokenSource.cancel();
+    // }, [isLogged]);
+
+    if (localLoginStatus) return <Redirect to="/" />
     return (
         <section className="ftco-section">
             <div className="container">
