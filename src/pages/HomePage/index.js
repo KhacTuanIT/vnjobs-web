@@ -16,7 +16,13 @@ const HomePage = () => {
             return payload.data;
         }
         console.log(getJob());
-    }, [])
+    }, []);
+
+    const getOrg = async (id) => {
+        console.log(`${API.API}${API.ORGANIZATION}/${id}`);
+        const payload = await axios.get(`${API.API}${API.ORGANIZATION}/${id}`)
+        return payload.data;
+    }
 
     return (    
     <div>
@@ -62,16 +68,16 @@ const HomePage = () => {
                             <div className="job-item">
                                 <div className="title-job-item">
                                     <img src="images/logo_official.png" />
-                                    <div className="company-name">Google</div>
+                                    <div className="company-name"></div>
                                 </div>
                                 <div className="right-content">
                                     <div className="desc">
                                         <div className="desc-item salary">Negotiative</div>
-                                        <div className="desc-item major">IT</div>
-                                        <div className="desc-item type-work">Full-time</div>
+                                        <div className="desc-item major">{e.major.major_name}</div>
+                                        <div className="desc-item type-work">{e.work_type}</div>
                                     </div>
                                     <div className="rc-content">
-                                        <div className="title-text col-sm-6 p-0">Job title</div>
+                                        <div className="title-text col-sm-6 p-0">{e.title}</div>
                                         <div className="content-button col-sm-6 justify-content-end p-0">
                                             <NavLink to={`/job-detail/${e.id}`} className="btn-t btn-link-app">APPLY</NavLink>
                                         </div>

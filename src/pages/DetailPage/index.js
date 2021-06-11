@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as API from '../../constants/Config';
+import { Redirect } from 'react-router-dom';
 
 const DetailPage = (props) => {
     const [jobDetail, setJobDetail] = useState(null);
     const [major, setMajor] = useState(null);
     const [org, setOrg] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
+
+    const [rnId, setRnId] = useState(0);
+    const [expYears, setExpYears] = useState(0);
+    const [cvPath, setCvPath] = useState(null);
+    const [coverLetterPath, setCoverLetterPath] = useState(null);
+
     const url = props.match.url;
     const arrUrl = url.split('/');
     const idItem = arrUrl[arrUrl.length-1];
+
     useEffect(() => {
         console.log(`${API.API}${API.RECRUITMENT_NEWS}/${idItem}`);
         async function getJobDetail() {
@@ -26,6 +35,7 @@ const DetailPage = (props) => {
                 console.log("Getting data");
                 const data= pl.data;
                 if (data) {
+                    setRnId(data.id);
                     if (!major) {
                         const ep = API.API + API.MAJOR + '/' + data.major_id;
                         const mpl = await axios.get(ep);
@@ -72,8 +82,58 @@ const DetailPage = (props) => {
         var jsDate = month[parseInt(dateParts[1])] + ' ' + dateParts[2] + ', ' + dateParts[0];
         return jsDate;
     }
+
+    const handleSubmit = async(e) => {
+        e.preventDefault();
+        try {
+            let cover = document.getElementsByName('cover_letter_path')[0].files[0];
+            let cv = document.getElementsByName('cv_path')[0].files[0];
+            console.log(cover);
+
+            let formdata = new FormData();
+            formdata.append('rn_id', rnId);
+            formdata.append('exp_years', expYears);
+            formdata.append('cover_letter_path', cover);
+            formdata.append('cv_path', cv);
+            console.log('FORM DATA');
+            console.log(formdata);
+            const response = await axios.post(`${API.API}${API.APPLY}`, formdata, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': `multipart/form-data`,
+                },
+            });
+            if (response.status === 200) {
+                console.log("đã apply")
+            } else if (response.status === 201) {
+                console.log("đã apply")
+            } else if (response.status === 401) {
+                console.log("chưa đăng nhập")
+            }
+        } catch (error) {
+            if (error.response.status === 401) {
+                console.log("chưa đăng nhập")
+                setIsLoggedIn(false);
+            }
+            console.log(error.response.status);
+        }
+    }
+
+    const handleChange = (e) => {
+        const target = e.target;
+        const value = target.value;
+        setExpYears(value);
+    }
+
+    const handleChangeFile = (e) => {
+        const target = e.target;
+        const name = target.name;
+        const value = target.files;
+        if (name === 'cv_path') setCvPath(value);
+        if (name === 'cover_letter_path') setCoverLetterPath(value);
+    }
     
-    return isLoading ? 
+    return !isLoggedIn ? <Redirect to="/sign-in" /> : isLoading ? 
         <div className="d-flex justify-content-center loading-wr">
             <div className="spinner-grow" role="status mr-3">
                 <span className="sr-only">Loading...</span>
@@ -124,23 +184,24 @@ const DetailPage = (props) => {
             </div>
             <div className="container-fluid">
                 <h3 className="text-center">APPLY JOB</h3>
-                <form className="apply container col-sm-6">
+                <form onSubmit={handleSubmit} action="https://api.vnjobs.tk/api/v1/users/apply" method="POST" encType="multipart/form-data" className="apply container col-sm-6">
+                    <input type="hidden" name="rn_id" value={jobDetail ? jobDetail.id : null} />
                     <div className="mb-3 row">
                         <label className="col-sm-2 col-form-label">Exp years: </label>
                         <div className="col-sm-10">
-                        <input type="number" className="form-control-plaintext input-form" min="0" max="50"/>
+                        <input type="number" name="exp_years" className="form-control-plaintext input-form" min="0" max="50" value={expYears} onChange={handleChange}/>
                         </div>
                     </div>
                     <div className="mb-3 row">
                         <label className="col-sm-2 col-form-label">CV: </label>
                         <div className="col-sm-10">
-                        <input type="file" className="form-control-plaintext"/>
+                        <input type="file" id="cv_path" name="cv_path" className="form-control-plaintext"/>
                         </div>
                     </div>
                     <div className="mb-3 row">
                         <label className="col-sm-2 col-form-label">Cover letter: </label>
                         <div className="col-sm-10">
-                        <input type="file" className="form-control-plaintext"/>
+                        <input type="file" id="cover_letter_path" name="cover_letter_path" className="form-control-plaintext"/>
                         </div>
                     </div>
                     <div className="justify-content-center d-flex">
