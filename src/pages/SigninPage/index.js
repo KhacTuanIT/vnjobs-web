@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import '../../Login.css';
 import { ReactComponent as LoginSVG } from '../../assets/svg/worker-in-front-of-a-computer-monitor.svg';
-import ErrorAuthenticateNotify from '../../components/ErrorAuthenticateNotify';
+import AuthenticateNotify from '../../components/AuthenticateNotify';
 import axios from 'axios';
 import * as API from '../../constants/API';
 import { Redirect } from 'react-router-dom';
-// import useLocalStorage from 'uselocalstorage-react-hook';
 import useLocalStorage from '../../utils/useLocalStorage';
 
 const SignIn = () => {
@@ -127,7 +126,7 @@ const SignIn = () => {
                                 </div>
                                 <form action="#" className="signin-form">
                                     <div className="form-group mb-3">
-                                        <ErrorAuthenticateNotify msg={msgError} />
+                                        <AuthenticateNotify msg={msgError} />
                                         <label className="label" for="name">Email</label>
                                         <input type="text" className="form-control" value={email} onChange={(e) => { setEmail(e.target.value) }} placeholder="Email" required />
                                     </div>

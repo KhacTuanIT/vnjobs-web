@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const ErrorAuthenticateNotify = (props) => {
+const AuthenticateNotify = (props) => {
     const [msg, setMsg] = useState(props.msg);
 
     useEffect(() => {
@@ -14,4 +14,4 @@ const ErrorAuthenticateNotify = (props) => {
     );
 };
 
-export default ErrorAuthenticateNotify;
+export default AuthenticateNotify;
