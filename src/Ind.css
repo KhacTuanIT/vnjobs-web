@@ -227,20 +227,10 @@ body,
     padding-top: 20px;
 }
 
-.job-item-carousel .title-job-item .company-name {
-}
-
-.job-item-carousel .title-job-item .title-text {
-}
-
 .job-item-carousel .title-job-item .desc {
     flex: 1;
     width: 100%;
     display: block;
-}
-
-.job-item-carousel .title-job-item .desc .major,
-.job-item-carousel .title-job-item .desc .type-work {
 }
 
 .job-item-carousel .title-job-item .desc .desc-item {
@@ -251,11 +241,6 @@ body,
     position: absolute;
     top: 12px;
     right: 152px;
-}
-
-.job-item-carousel .content-button .btn-link-app {
-    /* border-color: #ffffff; */
-    /* color: #ffffff; */
 }
 
 .job-item-carousel .content-button .btn-link-app:hover,
@@ -280,10 +265,6 @@ body,
 
 .job-item-carousel:hover .right-content {
     bottom: 0;
-}
-
-.job-item-carousel:hover .right-content .rc-content .content-text {
-    /* color: #ffffff; */
 }
 
 /* FOOTER */

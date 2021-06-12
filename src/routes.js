@@ -3,6 +3,7 @@ import HomePage from "./pages/HomePage/index";
 import SigninPage from "./pages/SigninPage";
 import SignupPage from "./pages/SignupPage";
 import JobsPage from './pages/JobsPage/index';
+import UserProfile from './pages/UserProfile/index';
 
 const routes = [
     {
@@ -29,6 +30,11 @@ const routes = [
         path: '/jobs',
         exact: true,
         main: () => <JobsPage />
+    },
+    {
+        path: '/user-profile',
+        exact: true,
+        main: () => <UserProfile />
     }
 ];
 

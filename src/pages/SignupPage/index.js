@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import AuthenticateNotify from '../../components/AuthenticateNotify';
 import { ReactComponent as RegisterSVG } from '../../assets/svg/businessman-standing-with-a-suitcase.svg';
@@ -131,7 +132,7 @@ const SignUp = () => {
                                     <h2>Welcome to Sign up</h2>
                                     <RegisterSVG />
                                     <p>You have an account?</p>
-                                    <a href="/sign-in" className="btn btn-green btn-outline-white">Sign In</a>
+                                    <NavLink to="/sign-in" className="btn btn-white btn-outline-white">Sign In</NavLink>
                                 </div>
                             </div>
                             <div className="login-wrap p-4 p-lg-5 order-md-last">

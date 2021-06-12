@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../../Login.css';
+import { NavLink } from 'react-router-dom';
 import { ReactComponent as LoginSVG } from '../../assets/svg/worker-in-front-of-a-computer-monitor.svg';
 import AuthenticateNotify from '../../components/AuthenticateNotify';
 import axios from 'axios';
@@ -109,7 +110,7 @@ const SignIn = () => {
                                     <h2>Welcome to VNJobs</h2>
                                     <LoginSVG />
                                     <p>Don't have an account?</p>
-                                    <a href="/sign-up" className="btn btn-green btn-outline-white">Sign Up</a>
+                                    <NavLink to="/sign-up" className="btn btn-white btn-outline-white">Sign Up</NavLink>
                                 </div>
                             </div>
                             <div className="login-wrap p-4 p-lg-5">
