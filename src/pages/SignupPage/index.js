@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 
 const index = () => {
     return (
@@ -12,7 +13,7 @@ const index = () => {
                                 <div className="text w-100">
                                     <h2>Welcome to Sign up</h2>
                                     <p>You have an account?</p>
-                                    <a href="/sign-in" className="btn btn-white btn-outline-white">Sign In</a>
+                                    <NavLink to="/sign-in" className="btn btn-white btn-outline-white">Sign In</NavLink>
                                 </div>
                             </div>
                             <div className="login-wrap p-4 p-lg-5 order-md-last">

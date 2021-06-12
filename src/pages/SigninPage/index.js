@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import '../../Login.css';
+import { NavLink } from 'react-router-dom';
 
 const index = () => {
     return (
@@ -13,7 +14,7 @@ const index = () => {
                                 <div className="text w-100">
                                     <h2>Welcome to login</h2>
                                     <p>Don't have an account?</p>
-                                    <a href="/sign-up" className="btn btn-white btn-outline-white">Sign Up</a>
+                                    <NavLink to="/sign-up" className="btn btn-white btn-outline-white">Sign Up</NavLink>
                                 </div>
                             </div>
                             <div className="login-wrap p-4 p-lg-5">

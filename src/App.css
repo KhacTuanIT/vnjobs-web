@@ -1,3 +1,15 @@
+@font-face {
+  font-family: 'Helvetica Neue';
+  src: local('Helvetica Neue'), local('HelveticaNeue'), 
+      url('./fonts/HelveticaNeue.otf') format('otf'),
+      url('./fonts/helveticaneue.ttf') format('ttf');
+}
+
+* {
+  font-family: 'Helvetica Neue'!important;
+  font-size: 1.1rem;
+}
+
 .App {
   text-align: center;
 }
@@ -28,8 +40,12 @@
   background-color: #ffffff;
 }
 
-.App-link {
+.app-link {
   color: #61dafb;
+}
+
+.br-6 {
+  border-radius: 6px!important;
 }
 
 @keyframes App-logo-spin {

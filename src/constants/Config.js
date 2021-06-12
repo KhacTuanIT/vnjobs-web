@@ -7,3 +7,5 @@ export const SIGN_UP = '/auth/register';
 export const MAJOR = '/majors';
 export const ORGANIZATION = '/organizations';
 export const APPLY = '/users/apply';
+export const USER = '/user';
+export const APPLIED = '/user/applied';
