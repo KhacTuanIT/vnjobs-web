@@ -1,0 +1,30 @@
+.header-form-apply {
+    position: relative;
+}
+.applied-popup {
+    position: absolute;
+    display: inline-block;
+    right: 25%;
+    top: 5px;
+    background-color: #d9dfdd;
+    border-radius: 2px;
+    padding: 2px 7px;
+}
+
+.applied-popup:before {
+    content:"\A";
+    border-style: solid;
+    border-width: 7px 7px 7px 0;
+    border-color: transparent #d9dfdd transparent transparent;
+    position: absolute;
+    left: -5px;
+    top: 12px;
+}
+
+.applied-success {
+    color: #19846c;
+}
+
+.applied-failed {
+    color: red;
+}

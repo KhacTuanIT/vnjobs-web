@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as API from '../../constants/Config';
 import { Redirect } from 'react-router-dom';
+import './detail.css';
 
 const DetailPage = (props) => {
     const [jobDetail, setJobDetail] = useState(null);
@@ -12,8 +13,8 @@ const DetailPage = (props) => {
 
     const [rnId, setRnId] = useState(0);
     const [expYears, setExpYears] = useState(0);
-    const [cvPath, setCvPath] = useState(null);
-    const [coverLetterPath, setCoverLetterPath] = useState(null);
+    const [isSuccess, setIsSucces] = useState(false);
+    const [isSending, setIsSending] = useState(false);
 
     const url = props.match.url;
     const arrUrl = url.split('/');
@@ -99,19 +100,20 @@ const DetailPage = (props) => {
             console.log(formdata);
             const response = await axios.post(`${API.API}${API.APPLY}`, formdata, {
                 withCredentials: true,
-                headers: {
-                    'Content-Type': `multipart/form-data`,
-                },
             });
             if (response.status === 200) {
+                setIsSending(true);
+                setIsSucces(true);
                 console.log("đã apply")
             } else if (response.status === 201) {
+                setIsSending(true);
+                setIsSucces(true);
                 console.log("đã apply")
-            } else if (response.status === 401) {
-                console.log("chưa đăng nhập")
             }
         } catch (error) {
             if (error.response.status === 401) {
+                setIsSending(true);
+                setIsSucces(false);
                 console.log("chưa đăng nhập")
                 setIsLoggedIn(false);
             }
@@ -123,14 +125,6 @@ const DetailPage = (props) => {
         const target = e.target;
         const value = target.value;
         setExpYears(value);
-    }
-
-    const handleChangeFile = (e) => {
-        const target = e.target;
-        const name = target.name;
-        const value = target.files;
-        if (name === 'cv_path') setCvPath(value);
-        if (name === 'cover_letter_path') setCoverLetterPath(value);
     }
     
     return !isLoggedIn ? <Redirect to="/sign-in" /> : isLoading ? 
@@ -183,7 +177,14 @@ const DetailPage = (props) => {
                 
             </div>
             <div className="container-fluid">
-                <h3 className="text-center">APPLY JOB</h3>
+                <div className="header-form-apply container">
+                    <h3 className="text-center">APPLY JOB</h3>
+                    { isSending ? isSuccess ? 
+                        <span className="applied-popup applied-success">Apply successfully!</span>
+                        : <span className="applied-popup applied-failed">Apply failed!</span>
+                    : null}
+                </div>
+                
                 <form onSubmit={handleSubmit} action="https://api.vnjobs.tk/api/v1/users/apply" method="POST" encType="multipart/form-data" className="apply container col-sm-6">
                     <input type="hidden" name="rn_id" value={jobDetail ? jobDetail.id : null} />
                     <div className="mb-3 row">
