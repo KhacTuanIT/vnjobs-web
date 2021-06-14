@@ -1,6 +1,5 @@
-import React, { Component, useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import {NavLink, Redirect} from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import {NavLink} from 'react-router-dom';
 import '../../Ind.css';
 import axios from 'axios';
 import * as API from '../../constants/Config';

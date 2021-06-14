@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const index = () => {
     return (
@@ -14,9 +15,9 @@ const index = () => {
                         </div>
                         <div className="list-link">
                             <ul>
-                                <li><a href="">Home</a></li>
-                                <li><a href="">Jobs</a></li>
-                                <li><a href="">Sign in</a></li>
+                                <li><Link to="/">Home</Link></li>
+                                <li><Link to="/">Jobs</Link></li>
+                                <li><Link to="/">Sign in</Link></li>
                             </ul>
                         </div>
                     </div>
@@ -26,8 +27,8 @@ const index = () => {
                         </div>
                         <div className="list-link">
                             <ul>
-                                <li>Facebook: <a href="">fb</a></li>
-                                <li>Twitter: <a href="">twitter</a></li>
+                                <li>Facebook: <Link to="/">fb</Link></li>
+                                <li>Twitter: <Link to="/">twitter</Link></li>
                             </ul>
                         </div>
                     </div>

@@ -1,32 +1,70 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCookies } from 'react';
 import './userProfile.css';
 import * as Config from '../../constants/Config';
+import * as API from '../../constants/API';
 import axios from 'axios';
 import { NavLink, Redirect } from 'react-router-dom';
 
 const UserProfile = () => {
 
-    const [user, setUser] = useState(null);
-    const [org, setOrg] = useState(null);
+    const [userProfile, setUserProfile] = useState(null);
+    const [orgs, setOrgs] = useState(null);
     const [recruitmentNews, setRecruitmentNews] = useState(null);
     const [applied, setApplied] = useState(null);
+    const [ownerOrg, setOwnerOrg] = useState(null);
+    const [listOwnerOrg, setListOwnerOrg] = useState(null);
     const [isCreateOrg, setIsCreateOrg] = useState(false);
     const [isEditInfo, setIsEditInfo] = useState(false);
     const [isCreateRecruitmentNews, setIsCreateRecruitmentNews] = useState(false);
     const [isMember, setIsMember] = useState(false);
-    const [isOrg, setIsOrg] = useState(true);
+    const [isOrg, setIsOrg] = useState(false);
     const [isEditOrg, setIsEditOrg] = useState(false);
     const [isManageOrg, setIsManageOrg] = useState(false);
     const [majors, setMajors] = useState(null);
-    const [isLogged, setIsLogged] = useState(true);
-    const mountedRef = useRef(true)
+    const [isLogged, setIsLogged] = useState(false);
+
+    // User info variable
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [dob, setDob] = useState('');
+    const [address, setAddress] = useState('');
+    const [bio, setBio] = useState('');
+    const [facebook, setFacebook] = useState('');
+    const [linkedin, setLinkedin] = useState('');
+
+    // org info variable
+    const [orgName, setOrgName] = useState('');
+    const [orgPhone, setOrgPhone] = useState('');
+    const [orgAddress, setOrgAddress] = useState('');
+    const [tax, setTax] = useState('');
+    const [description, setDescription] = useState('');
+
+    // recruitment news info variable
+    const [listOrg, setListOrg] = useState(null);
+    const [orgId, setOrgId] = useState(''); 
+    const [majorId , setMajorId] = useState('');  
+    const [title, setTitle] = useState(''); 
+    const [content, setContent] = useState(''); 
+    const [rnAddress, setRnAddress] = useState(''); 
+    const [city, setCity] = useState(''); 
+    const [workType, setWorkType] = useState(''); 
+    const [startTime, setStartTime] = useState(''); 
+    const [endTime, setEndTime] = useState(''); 
+    const [interviewStartTime, setInterviewStartTime] = useState(''); 
+    const [interviewEndTime, setInterviewEndTime] = useState(''); 
+
+    // toast state
+    const [toastIcon, setToastIcon] = useState('');
+    const [toastMessage, setToastMessage] = useState('helllo');
+
 
     useEffect(async() => {
         if (!majors) {
             try {
                 const payload = await axios.get(`${Config.API}${Config.MAJOR}`);
                 if (payload.status === 200) {
-                    console.log('GET MAJOR LIST:');
+                    // console.log('GET MAJOR LIST:');
                     setMajors(payload.data.data);
                 } 
             } catch (error) {
@@ -35,47 +73,81 @@ const UserProfile = () => {
         }
     }, [majors]);
 
-    useEffect(async() => {
-        if (!user) {
+    useEffect(() => {
+        if (!userProfile) {
             try {
-                const payload = await axios.get(`${Config.API}${Config.USER}`, null, 
-                    {
-                        withCredenticals: true,
+                axios.get(API.USER, { withCredentials: true, }).then(function (res) {
+                    // const payload = await axios.get(API.USER, { withCredentials: true, })
+                    if (res.status === 200) {
+                        let listOrgTemp = [];
+                        let tempOw = [];
+                        let tempOr = [];
+                        const data = res.data;
+                        console.log(data);
+                        if (data.orgs.length > 0) {
+                            tempOr = [...data.orgs];
+                            setOrgs(data.orgs);
+                            setIsMember(true);
+                        }
+                        if (data.owned_orgs.length > 0) {
+                            tempOw = [...data.owned_orgs];
+                            setListOwnerOrg(data.owned_orgs);
+                            setOwnerOrg(data.owned_orgs[0]);
+                            setIsOrg(true);
+                        }
+                        if (data.recruitment_news.length > 0) {
+                            setRecruitmentNews(data.recruitment_news);
+                        }
+                        listOrgTemp = [...tempOw, ...tempOr];
+                        setListOrg(listOrgTemp);
+                        setUserProfile(data);
+                        setFirstName(data.first_name);
+                        setLastName(data.last_name);
+                        setAddress(data.address);
+                        setPhone(data.phone);
+                        setDob(data.dob);
+                        setBio(data.bio);
+                        setFacebook(data.social_facebook);
+                        setLinkedin(data.social_linkedin);
                     }
-                );
-                if (payload.status === 200) {
-                    if (!mountedRef.current) return null
-                    console.log('GET USER');
-                    setUser(payload.data);
-                }
-                else if (payload.status === 401) {
-                    if (!mountedRef.current) return null
-                    console.log('User not login yet.');
-                }
+                    else {
+                        console.log("RESPONSE DATA: ");
+                        console.log(res);
+                    }
+                }).catch(error => {
+                    console.log(error)
+                    if (error.response !== undefined) {
+                        if (error.response.status === 401) {
+                            console.log('Not login yet.');
+                            setIsLogged(true);
+                        }
+                    }
+    
+                    if (error.message === 'Network Error') {
+                        console.log('NETWORK ERR');
+                    }
+                })
             } catch (error) {
-                if (!mountedRef.current) return null
-                if (error.response !== 'undefined') {
-                    if (error.response.status === 401) {
-                        console.log('User not login yet.');
-                        setIsLogged(true);
-                    }
-                }
+                console.log(error);
             }
         }
-    }, [user]);
+        
+    }, [userProfile]);
 
-    useEffect(async() => {
-        if (!applied) {
+    useEffect(() => {
             try {
-                const payload = await axios.get(`${Config.API}${Config.APPLIED}`, null,
+                // axios.get(`${Config.API}${Config.APPLIED}`,
+                axios.get(API.LIST_APPLIED_JOBS,
                 {
-                    withCredenticals: true,
-                });
-                if (payload.status === 200) {
-                    console.log('GET APPLIED LIST');
-                    console.log(payload.data.data);
-                    setApplied(payload.data.data);
-                }
+                    withCredentials: true,
+                }).then(res => {
+                    if (res.status === 200) {
+                        console.log('GET APPLIED LIST');
+                        console.log(res);
+                        setApplied(res.data);
+                    }
+                })
+                
             } catch (error) {
                 if (error.response !== 'undefined') {
                     if (error.response.status === 401) {
@@ -84,15 +156,147 @@ const UserProfile = () => {
                     }
                 }
             }
+    }, []);
+
+
+    const showToast = (type, icon = '', message = '') => {
+        setToastIcon(icon);
+        setToastMessage(message);
+        var x = document.getElementById("toast")
+        switch (type) {
+            case 'success': 
+                x.className = "show success";
+                break;
+            case 'error':
+                x.className = "show error";
+                break;
+            case 'warning':
+                x.className = "show warning";
+                break;
+            default:
+                x.className = "show";
+                break;
         }
-    }, [applied]);
+        
+        setTimeout(function(){ x.className = x.className.replace("show", ""); }, 5000);
+    }
+
+    const onCreateOrg = () => {
+        try {
+            const data = {
+                'org_name': orgName,
+                'phones': orgPhone,
+                'description': description,
+                'tax_id': parseInt(tax),
+                'address': orgAddress,
+                'logo_path': '..',
+                'cover_path': '..',
+            }
+            axios.post(API.LIST_ORGANIZATION, data, {withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'accept': 'application/json; charset=utf8;'
+                }
+            })
+                .then(res => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        setOwnerOrg(res.data);
+                        setIsOrg(true);
+                        showToast('success', 'bi bi-info-circle', 'Create Organization successfully! Waiting for admin verify.')
+                    }
+                }).catch(error => {
+                    console.log(error);
+                    if (error.response !== undefined) {
+                        if (error.response.status === 401) {
+                            showToast('error' , 'bi bi-info-circle', 'Create failed! You are not log in yet.');
+                        }
+                    }
+                    if (error.message === 'Network Error') {
+                        showToast('error' , 'bi bi-info-circle', 'Create failed! Network error.');
+                    } else {
+                        showToast('error' , 'bi bi-info-circle', error.message);
+                    }
+                })
+        } catch (error) {
+            if (error.response !== undefined) {
+                if (error.response.status === 401) {
+                    showToast('error' , 'bi bi-info-circle', 'Create failed! You are not log in yet.');
+                }
+            }
+            if (error.message === 'Network Error') {
+                showToast('error' , 'bi bi-info-circle', 'Create failed! Network error.');
+            } else {
+                showToast('error' , 'bi bi-info-circle', error.message);
+            }
+        }
+    }
+    
+    //
+    const handleUpdateUserInfo = () => {
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
+    //
+    const handleCreateRecruitmentNews = () => {
+
+    }
+    //
+    const handleEditOrg = () => {
+
+    }
+
+    const onClickManageOrg = () => {
+        setIsManageOrg(true);
+        setIsCreateRecruitmentNews(false);
+    }
+
+    const onClickCreateOrg = () => {
+        setIsCreateOrg(true);
+        setIsCreateRecruitmentNews(false);
+    }
+
+    const onClickCreateRecruitmentNews = () => {
+        setIsManageOrg(false);
+        setIsCreateRecruitmentNews(true);
+        setIsCreateOrg(false);
+    }
+
+    const signOut = () => {
+        setIsLogged(true);
+        // set logout on server side
+    }
+
+    function makeid(length) {
+        var result           = '';
+        var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for ( var i = 0; i < length; i++ ) {
+          result += characters.charAt(Math.floor(Math.random() * 
+     charactersLength));
+       }
+       return result;
+    }
+
+    const handleOnChangeSelect = (e) => {
+        const value = e.target.value;
+        setOwnerOrg(value);
+    }
 
     return isLogged ? <Redirect to="/sign-in" /> : (
         <div className="container mt-3 mb-3">
             <div className="row">
                 
-                <div className="col-md-4 mb-3 text-left">
-                    <div><h4>USER PROFILE</h4></div>
+                <div className="col-md-12 mb-3 text-left">
+                    <div style={{position: 'relative'}}>
+                        <h4>USER PROFILE</h4>
+                        <button className="close-button btn br-6" onClick={() => signOut()}>
+                            Sign out <i className="pl-1 bi bi-box-arrow-right"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div className="row gutters-sm">
@@ -102,9 +306,9 @@ const UserProfile = () => {
                             <div className="d-flex flex-column align-items-center text-center">
                                 <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" className="rounded-circle" width="150" />
                                 <div className="mt-3">
-                                    <h4>{user ? user.first_name + ' ' + user.last_name : 'Veinz Tran'}</h4>
-                                    <p className="text-secondary mb-1">{user ? user.bio : 'bio'}</p>
-                                    <p className="text-muted font-size-sm">{user ? user.address : 'Bay Area, San Francisco, CA'}</p>
+                                    <h4>{userProfile ? userProfile.first_name + ' ' + userProfile.last_name : 'Veinz Tran'}</h4>
+                                    <p className="text-secondary mb-1 text-left"><strong>Bio: </strong>{userProfile ? userProfile.bio : 'bio'}</p>
+                                    <p className="text-muted font-size-sm text-justify"><strong>Address: </strong>{userProfile ? userProfile.address : 'Bay Area, San Francisco, CA'}</p>
                                 </div>
                             </div>
                         </div>
@@ -121,14 +325,14 @@ const UserProfile = () => {
                                     </svg>
                                     Linkedin
                                 </h6>
-                                <NavLink to={user ? user.social_linkedin : '#'} className="text-secondary">visit</NavLink>
+                                { userProfile ? userProfile.social_linkedin ? <NavLink to={userProfile.social_linkedin} className="text-secondary">visit</NavLink> : 'null' : 'null'}
                             </li>
                             <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                 <h6 className="mb-0 ml-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-facebook mr-2 icon-inline text-primary"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
                                     <span className="ml-2">Facebook</span>
                                 </h6>
-                                <NavLink to={user ? user.social_facebook : '#'} className="text-secondary">visit</NavLink>
+                                {userProfile ? userProfile.social_facebook ? <NavLink to={userProfile.social_facebook} className="text-secondary">visit</NavLink> : 'null' : 'null' }
                             </li>
                         </ul>
                     </div>
@@ -139,7 +343,7 @@ const UserProfile = () => {
                                     <i className="bi bi-building pr-3"></i> Company
                                 </div>
                                 <div className="text-right pt-3 pb-3">
-                                    <button className="btn btn-outline-secondary br-6" onClick={() => setIsManageOrg(true)}>Manage</button>
+                                    <button className="btn btn-outline-secondary br-6" onClick={() => onClickManageOrg()}>Manage</button>
                                 </div>
                             </div>
                         </div> :
@@ -149,7 +353,7 @@ const UserProfile = () => {
                                     <i className="bi bi-building pr-3"></i> Company
                                 </div>
                                 <div className="text-right pt-3 pb-3">
-                                    <button className="btn btn-outline-secondary br-6" onClick={() => setIsCreateOrg(true)}>Create</button>
+                                    <button className="btn btn-outline-secondary br-6" onClick={() => onClickCreateOrg()}>Create</button>
                                 </div>
                             </div>
                         </div>
@@ -161,7 +365,7 @@ const UserProfile = () => {
                                 <i className="bi bi-newspaper pr-3"></i> Recruitment news
                             </div>
                             <div className="text-right pt-3 pb-3">
-                                <button className="btn btn-outline-secondary br-6" onClick={() => setIsCreateRecruitmentNews(true)}>Create</button>
+                                <button className="btn btn-outline-secondary br-6" onClick={() => onClickCreateRecruitmentNews()}>Create</button>
                             </div>
                         </div>
                     </div> || isMember && <div className="card mt-3">
@@ -170,7 +374,7 @@ const UserProfile = () => {
                                 <i className="bi bi-newspaper pr-3"></i> Recruitment news
                             </div>
                             <div className="text-right pt-3 pb-3">
-                                <button className="btn btn-outline-secondary br-6" onClick={() => setIsCreateRecruitmentNews(true)}>Create</button>
+                                <button className="btn btn-outline-secondary br-6" onClick={() => onClickCreateRecruitmentNews()}>Create</button>
                             </div>
                         </div>
                     </div>}
@@ -180,11 +384,33 @@ const UserProfile = () => {
                 {/* check: if click editOrg => show input for editing */}
                 { isManageOrg ? <div className="col-md-8">
                     <div className="card mb-3">
+                        <select className="form-select" name="manage-org-select" defaultValue={ownerOrg} onChange={() => handleOnChangeSelect()}>
+                            {
+                                listOwnerOrg ? listOwnerOrg.map((e, i) => {
+                                    return <option key={e.id + makeid(2)} value={e}>{e.org_name}</option>
+                                }) : null
+                            }
+                        </select>
+                    </div>
+                    <div className="card mb-3">
                         <div className="card-header">
                             <h5>YOUR COMPANY</h5>
-                            <div className="company-status company-confirmed">
-                                Comfirmed
-                            </div>
+                            {
+                                ownerOrg ? 
+                                    ownerOrg.is_verify ? 
+                                    <div className="company-status company-confirmed">
+                                        Verified
+                                    </div>
+                                    : 
+                                    <div className="company-status company-unconfirmed">
+                                        Unverified
+                                    </div>
+                                :
+                                <div className="company-status company-unconfirmed">
+                                    Unverified
+                                </div>
+                            }
+                            
                             <button className="close-button btn br-6" onClick={() => setIsManageOrg(false)}>
                                 <i className="bi bi-x-octagon"></i>
                             </button>
@@ -198,8 +424,8 @@ const UserProfile = () => {
                                 <div className="col-sm-9 text-secondary text-left">
                                     {
                                         isEditOrg ? 
-                                        <input type="text" className="form-control" placeholder="Company name" name="org_name" />
-                                        : 'Company name' 
+                                        <input type="text" className="form-control" placeholder="Company name" name="orgName" value={orgName} onChange={e => setOrgName(e.target.value)} />
+                                        : ownerOrg ? ownerOrg.org_name : null 
                                     }
                                 </div>
                             </div>
@@ -211,8 +437,8 @@ const UserProfile = () => {
                                 <div className="col-sm-9 text-secondary text-left">
                                 {
                                     isEditOrg ? 
-                                    <input type="text" className="form-control" placeholder="Company phone" name="org_phone" />
-                                    : 'Company Phome'
+                                    <input type="text" className="form-control" placeholder="Company phone" name="orgPhone" value={orgPhone} onChange={e => setOrgPhone(e.target.value)} />
+                                    : ownerOrg ? ownerOrg.phones : null
                                 }
                                 </div>
                             </div>
@@ -223,8 +449,8 @@ const UserProfile = () => {
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
                                 { isEditOrg ?
-                                    <input type="text" className="form-control" placeholder="Tax ID" name="tax" />
-                                    : 'Tax ID'
+                                    <input type="text" className="form-control" placeholder="Tax ID" name="taxId"  value={tax} onChange={e => setTax(e.target.value)}/>
+                                    : ownerOrg ? ownerOrg.tax_id : null
                                 }
                                 </div>
                             </div>
@@ -235,8 +461,8 @@ const UserProfile = () => {
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
                                 { isEditOrg ?
-                                    <input type="text" className="form-control" placeholder="Description" name="description" />
-                                    : 'Description'
+                                    <input type="text" className="form-control" placeholder="Description" name="description" value={description} onChange={e => setDescription(e.target.value)} />
+                                    : ownerOrg ? ownerOrg.description : null
                                 }
                                 </div>
                             </div>
@@ -247,8 +473,8 @@ const UserProfile = () => {
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
                                 { isEditOrg ?
-                                    <input type="text" className="form-control" placeholder="Address" name="org_address" />
-                                    : 'Address'
+                                    <input type="text" className="form-control" placeholder="Address" name="orgAddress" value={orgAddress} onChange={e => setOrgAddress(e.target.value)} />
+                                    : ownerOrg ? ownerOrg.address : null
                                 }
                                 </div>
                             </div>
@@ -257,7 +483,7 @@ const UserProfile = () => {
                             { isEditOrg ?
                                 <div className="col-sm-12">
                                     <button type="button" className="btn btn-danger br-6 mr-3" onClick={() => setIsEditOrg(false)}>Cancel</button>
-                                    <button type="button" className="btn btn-info br-6">Save</button>
+                                    <button type="button" className="btn btn-info br-6" onClick={() => handleEditOrg()}>Save</button>
                                 </div>
                                 : <div className="col-sm-12">
                                     <button type="button" className="btn btn-info br-6" onClick={() => setIsEditOrg(true)}>Edit</button>
@@ -283,7 +509,7 @@ const UserProfile = () => {
                                     <h6 className="mb-0">Company Name</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <input type="text" className="form-control" placeholder="Company name" name="first_name" />
+                                    <input type="text" className="form-control" placeholder="Company name" name="org_name" value={orgName} onChange={e => setOrgName(e.target.value)} />
                                 </div>
                             </div>
                             <hr />
@@ -292,7 +518,7 @@ const UserProfile = () => {
                                     <h6 className="mb-0">Company Phone</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <input type="text" className="form-control" placeholder="Company phone" name="first_name" />
+                                    <input type="text" className="form-control" placeholder="Company phone" name="org_phone" value={orgPhone} onChange={e => setOrgPhone(e.target.value)} />
                                 </div>
                             </div>
                             <hr />
@@ -301,7 +527,7 @@ const UserProfile = () => {
                                     <h6 className="mb-0">Tax</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <input type="text" className="form-control" placeholder="Tax ID" name="first_name" />
+                                    <input type="text" className="form-control" placeholder="Tax ID" name="tax_id" value={tax} onChange={e => setTax(e.target.value)} />
                                 </div>
                             </div>
                             <hr />
@@ -310,7 +536,7 @@ const UserProfile = () => {
                                     <h6 className="mb-0">Description</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <input type="text" className="form-control" placeholder="Description" name="first_name" />
+                                    <input type="text" className="form-control" placeholder="Description" name="description" value={description} onChange={e => setDescription(e.target.value)} />
                                 </div>
                             </div>
                             <hr />
@@ -319,13 +545,13 @@ const UserProfile = () => {
                                     <h6 className="mb-0">Address</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <input type="text" className="form-control" placeholder="Address" name="first_name" />
+                                    <input type="text" className="form-control" placeholder="Address" name="org_address" value={orgAddress} onChange={e => setOrgAddress(e.target.value)} />
                                 </div>
                             </div>
                             <hr />
                             <div className="row">
                                 <div className="col-sm-12">
-                                    <button type="button" className="btn btn-info br-6">Create</button>
+                                    <button type="button" className="btn btn-info br-6" onClick={() => onCreateOrg()}>Create</button>
                                 </div>
                             </div>
                         </div>
@@ -342,14 +568,28 @@ const UserProfile = () => {
                         <div className="card-body">
                             <input type="hidden" name="org_id" value=""/>
                             <input type="hidden" name="author_id" value=""/>
-                            
+                            <div className="row">
+                                <div className="col-sm-3 d-flex align-items-center">
+                                    <h6 className="mb-0">Company</h6>
+                                </div>
+                                <div className="col-sm-9 text-secondary text-left">
+                                    <select className="form-select" name="org_id_select" defaultValue={listOrg[0].id} onChange={e => setOrgId(e.target.value)}>
+                                        {
+                                            listOrg ? 
+                                                listOrg.map((e, i) => {
+                                                    return <option value={e.id} key={e.id + '_orgss_' + makeid(2)}>{e.org_name}</option>
+                                                }) : null
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <hr />
                             <div className="row">
                                 <div className="col-sm-3 d-flex align-items-center">
                                     <h6 className="mb-0">Major</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <select className="form-select" name="major_id">
-                                        <option selected>Select major</option>
+                                    <select className="form-select" name="major_id" defaultValue={majors[0].id} onChange={e => setMajorId(e.target.value)}>
                                         {
                                             majors ? 
                                                 majors.map((e, i) => {
@@ -365,7 +605,7 @@ const UserProfile = () => {
                                     <h6 className="mb-0">Title</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <input type="text" className="form-control" placeholder="Title" name="title" />
+                                    <input type="text" className="form-control" placeholder="Title" name="title" value={title} onChange={e => setTitle(e.target.value)} />
                                 </div>
                             </div>
                             <hr />
@@ -374,7 +614,7 @@ const UserProfile = () => {
                                     <h6 className="mb-0">Content</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <input type="text" className="form-control" placeholder="Content" name="content" />
+                                    <input type="text" className="form-control" placeholder="Content" name="content" value={content} onChange={e => setContent(e.target.value)} />
                                 </div>
                             </div>
                             <hr />
@@ -383,7 +623,7 @@ const UserProfile = () => {
                                     <h6 className="mb-0">Address</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <input type="text" className="form-control" placeholder="Address" name="address" />
+                                    <input type="text" className="form-control" placeholder="Address" name="address" value={rnAddress} onChange={e => setRnAddress(e.target.value)} />
                                 </div>
                             </div>
                             <hr />
@@ -392,7 +632,7 @@ const UserProfile = () => {
                                     <h6 className="mb-0">City</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <input type="text" className="form-control" placeholder="City" name="city" />
+                                    <input type="text" className="form-control" placeholder="City" name="city" value={city} onChange={e => setCity(e.target.value)} />
                                 </div>
                             </div>
                             <hr />
@@ -401,7 +641,7 @@ const UserProfile = () => {
                                     <h6 className="mb-0">Work Type</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <input type="text" className="form-control" placeholder="Work type" name="work_type" />
+                                    <input type="text" className="form-control" placeholder="Work type" name="work_type" value={workType} onChange={e => setWorkType(e.target.value)} />
                                 </div>
                             </div>
                             <hr />
@@ -410,7 +650,7 @@ const UserProfile = () => {
                                     <h6 className="mb-0">Start Time</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <input type="datetime-local" className="form-control" placeholder="Start time" name="start_time" />
+                                    <input type="datetime-local" className="form-control" placeholder="Start time" name="start_time" value={startTime} onChange={e => setStartTime(e.target.value)} />
                                 </div>
                             </div>
                             <hr />
@@ -419,7 +659,7 @@ const UserProfile = () => {
                                     <h6 className="mb-0">End Time</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <input type="datetime-local" className="form-control" placeholder="End time" name="end_time" />
+                                    <input type="datetime-local" className="form-control" placeholder="End time" name="end_time" value={endTime} onChange={e => setEndTime(e.target.value)} />
                                 </div>
                             </div>
                             <hr />
@@ -428,7 +668,7 @@ const UserProfile = () => {
                                     <h6 className="mb-0">Start Interview Time</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <input type="datetime-local" className="form-control" placeholder="Start interview time" name="interview_start_time" />
+                                    <input type="datetime-local" className="form-control" placeholder="Start interview time" name="interview_start_time" value={interviewStartTime} onChange={e => setInterviewStartTime(e.target.value)} />
                                 </div>
                             </div>
                             <hr />
@@ -437,13 +677,13 @@ const UserProfile = () => {
                                     <h6 className="mb-0">End Interview Time</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <input type="datetime-local" className="form-control" placeholder="End interview time" name="interview_end_time" />
+                                    <input type="datetime-local" className="form-control" placeholder="End interview time" name="interview_end_time" value={interviewEndTime} onChange={e => setInterviewEndTime(e.target.value)} />
                                 </div>
                             </div>
                             <hr />
                             <div className="row">
                                 <div className="col-sm-12">
-                                    <button type="button" className="btn btn-info br-6">Create</button>
+                                    <button type="button" className="btn btn-info br-6" onClick={() => handleCreateRecruitmentNews()}>Create</button>
                                 </div>
                             </div>
                         </div>
@@ -456,12 +696,23 @@ const UserProfile = () => {
                         <div className="card-body">
                             <div className="row">
                                 <div className="col-sm-3 d-flex align-items-center">
+                                    <h6 className="mb-0">Email</h6>
+                                </div>
+                                <div className="col-sm-9 text-secondary text-left">
+                                {
+                                    userProfile ? userProfile.email : 'mail@example.com' 
+                                }
+                                </div>
+                            </div>
+                            <hr />
+                            <div className="row">
+                                <div className="col-sm-3 d-flex align-items-center">
                                     <h6 className="mb-0">First Name</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
                                     { !isEditInfo ?
-                                    user ? user.first_name : 'Tran' :
-                                    <input type="text" className="form-control" placeholder="First name" name="first_name" />}
+                                    userProfile ? userProfile.first_name : 'Tran' :
+                                    <input type="text" className="form-control" placeholder="First name" name="first_name" value={firstName} onChange={e => setFirstName(e.target.value)} />}
                                 </div>
                             </div>
                             <hr />
@@ -471,20 +722,8 @@ const UserProfile = () => {
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
                                 { !isEditInfo ?
-                                    user ? user.last_name : 'Veinz' :
-                                    <input type="text" className="form-control" placeholder="Last name" name="last_name" />
-                                }
-                                </div>
-                            </div>
-                            <hr />
-                            <div className="row">
-                                <div className="col-sm-3 d-flex align-items-center">
-                                    <h6 className="mb-0">Email</h6>
-                                </div>
-                                <div className="col-sm-9 text-secondary text-left">
-                                { !isEditInfo ?
-                                    user ? user.email : 'mail@example.com' :
-                                    <input type="text" className="form-control" placeholder="Email" name="email" />
+                                    userProfile ? userProfile.last_name : 'Veinz' :
+                                    <input type="text" className="form-control" placeholder="Last name" name="last_name" value={lastName} onChange={e => setLastName(e.target.value)} />
                                 }
                                 </div>
                             </div>
@@ -495,8 +734,8 @@ const UserProfile = () => {
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
                                 { !isEditInfo ?
-                                    user ? user.phone : '(239) 902-2342' :
-                                    <input type="text" className="form-control" placeholder="Phone number" name="phone" />
+                                    userProfile ? userProfile.phone : '(239) 902-2342' :
+                                    <input type="text" className="form-control" placeholder="Phone number" name="phone" value={phone} onChange={e => setPhone(e.target.value)} />
                                 }
                                 </div>
                             </div>
@@ -507,8 +746,8 @@ const UserProfile = () => {
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
                                 { !isEditInfo ?
-                                    user ? user.dob : '02/02/2002' :
-                                    <input type="datetime-local" className="form-control" placeholder="Date of birth" name="dob" />
+                                    userProfile ? userProfile.dob : '02/02/2002' :
+                                    <input type="date" className="form-control" value={dob} onChange={e => setDob(e.target.value)} placeholder="Date of birth" name="dob" />
                                 }
                                 </div>
                             </div>
@@ -519,8 +758,8 @@ const UserProfile = () => {
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
                                 { !isEditInfo ?
-                                    user ? user.address : 'Bay Area, San Francisco, CA' :
-                                    <input type="text" className="form-control" placeholder="Address" name="address" />
+                                    userProfile ? userProfile.address : 'Bay Area, San Francisco, CA' :
+                                    <input type="text" className="form-control" placeholder="Address" name="address" value={address} onChange={e => setAddress(e.target.value)} />
                                 }
                                 </div>
                             </div>
@@ -531,8 +770,8 @@ const UserProfile = () => {
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
                                 { !isEditInfo ?
-                                    user ? user.bio : 'bio' :
-                                    <input type="text" className="form-control" placeholder="Bio" name="bio" />
+                                    userProfile ? userProfile.bio : 'bio' :
+                                    <input type="text" className="form-control" placeholder="Bio" name="bio" value={bio} onChange={e => setBio(e.target.value)} />
                                 }
                                 </div>
                             </div>
@@ -543,8 +782,8 @@ const UserProfile = () => {
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
                                 { !isEditInfo ?
-                                    user ? user.social_facebook : 'social facebook link' :
-                                    <input type="text" className="form-control" placeholder="Facebook" name="social_facebook" />
+                                    userProfile ? userProfile.social_facebook : 'social facebook link' :
+                                    <input type="text" className="form-control" placeholder="Facebook" name="social_facebook" value={facebook} onChange={e => setFacebook(e.target.value)} />
                                 }
                                 </div>
                             </div>
@@ -555,8 +794,8 @@ const UserProfile = () => {
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
                                 { !isEditInfo ?
-                                    user ? user.social_linkedin : 'social linkedin link' :
-                                    <input type="text" className="form-control" placeholder="Linkedin" name="social_linkedin" />
+                                    userProfile ? userProfile.social_linkedin : 'social linkedin link' :
+                                    <input type="text" className="form-control" placeholder="Linkedin" name="social_linkedin" value={linkedin} onChange={e => setLinkedin(e.target.value)} />
                                 }
                                 </div>
                             </div>
@@ -566,7 +805,7 @@ const UserProfile = () => {
                             { isEditInfo ?
                                 <div className="col-sm-12">
                                     <button type="button" className="btn btn-danger br-6 mr-3" onClick={() => setIsEditInfo(false)}>Cancel</button>
-                                    <button type="button" className="btn btn-info br-6">Save</button>
+                                    <button type="button" className="btn btn-info br-6" onClick={() => handleUpdateUserInfo()}>Save</button>
                                 </div>
                                 :
                                 <div className="col-sm-12">
@@ -582,10 +821,28 @@ const UserProfile = () => {
                             <div className="card h-100">
                                 <div className="card-body">
                                     <h6 className="d-flex align-items-center mb-3">Company Status</h6>
-                                    <small>Web Design</small>
-                                    <div className="progress mb-3" style={{height: '5px'}}>
-                                        <div className="progress-bar bg-primary" role="progressbar" style={{width: "80%"}} aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
+                                    <hr/>
+                                    {
+                                        listOwnerOrg ? 
+                                            listOwnerOrg.map((e, i) => {
+                                                return <div key={e.id + '__owner__' + makeid(4)}>
+                                                    <div className="text-left"><small>Company name</small></div>
+                                                    <div className="text-left">
+                                                        {e.org_name}
+                                                    </div>
+                                                    <div className="text-left"><small>Verify</small></div>
+                                                    <div className="text-left">
+                                                        {
+                                                            e.is_elect === 1 ? 'Verified' : 'Unverified'
+                                                        }
+                                                    </div>
+                                                    <br/>
+                                                </div>
+                                            })
+                                        : null
+                                    }
+                                    
+                                    
                                 </div>
                             </div>
                         </div> }
@@ -593,9 +850,19 @@ const UserProfile = () => {
                             <div className="card h-100">
                                 <div className="card-body">
                                     <h6 className="d-flex align-items-center mb-3">Recruitment news Status</h6>
-                                    <small>Web Design</small>
-                                    <div className="progress mb-3" style={{height: '5px'}}>
-                                        <div className="progress-bar bg-primary" role="progressbar" style={{width: "80%"}} aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <hr/>
+                                    <div className="text-left"><small>Recruitment news list</small></div>
+                                    <div>
+                                        { recruitmentNews ? 
+                                            recruitmentNews.length > 0 ?
+                                                recruitmentNews.map((e, i) => {
+                                                    return <div key={e.id + '__rn__'} className="d-flex justify-content-between mb-3">
+                                                        <div>{e.title}</div>
+                                                        <button className="btn br-6 btn-outline-secondary">Edit</button>
+                                                    </div>
+                                                })
+                                            : <small><i>Not found any recruitment news</i></small>
+                                        : <small><i>Not found any recruitment news</i></small>}
                                     </div>
                                 </div>
                             </div>
@@ -603,32 +870,71 @@ const UserProfile = () => {
                         || isMember && <div className="col-sm-6 mb-3">
                             <div className="card h-100">
                                 <div className="card-body">
-                                    <h6 className="d-flex align-items-center mb-3">Recruitment news Status</h6>
-                                    <small>Web Design</small>
-                                    <div className="progress mb-3" style={{height: '5px'}}>
-                                        <div className="progress-bar bg-primary" role="progressbar" style={{width: "80%"}} aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <h6 className="d-flex align-items-center mb-3">Member Status</h6>
+                                    <hr/>
+                                    <div className="text-left"><small>Recruitment news list</small></div>
+                                    <div>
+                                        { recruitmentNews ? 
+                                            recruitmentNews.length > 0 ?
+                                                recruitmentNews.map((e, i) => {
+                                                    return <div key={e.id + '__rn__'} className="d-flex justify-content-between mb-3">
+                                                        <div>{e.title}</div>
+                                                        <button className="btn br-6 btn-outline-secondary">Edit</button>
+                                                    </div>
+                                                })
+                                            : <small><i>Not found any recruitment news</i></small>
+                                        : <small><i>Not found any recruitment news</i></small>}
+                                    </div>
+                                    <div className="text-left"><small>Your position</small></div>
+                                    <div>
+                                        { orgs ? 
+                                            orgs.length > 0 ? 
+                                                orgs.map((e, i) => {
+                                                    return <div className="text-left list-org-item" key={e.id + '__org__' + makeid(2)}>
+                                                        Work at {e.org_name}
+                                                    </div>
+                                                })
+                                            : <small><i>Not found any your position</i></small>
+                                        : <small><i>Not found any your position</i></small>
+                                        }
                                     </div>
                                 </div>
                             </div>
                         </div>}
-                    </div>
-
-                    <div className="row gutters-sm">
                         <div className="col-sm-6 mb-3">
                             <div className="card h-100">
                                 <div className="card-body">
                                     <h6 className="d-flex align-items-center mb-3">Applied Status</h6>
-                                    <small>Web Design</small>
-                                    <div className="progress mb-3" style={{height: '5px'}}>
-                                        <div className="progress-bar bg-primary" role="progressbar" style={{width: "80%"}} aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
+                                    <hr/>
+                                    <div className="text-left"><small>Applied list</small></div>
+                                    {
+                                        applied ? 
+                                            applied.length > 0 ? 
+                                                applied.map((e, i) => {
+                                                    return <NavLink key={e.id + '__applied__'} to={'/job-detail/' + e.recruitment_news.id} className="list-applied-item d-flex justify-content-between">
+                                                            <div className="text-left">{e.recruitment_news.title}</div>
+                                                            <div className="text-right">Detail</div>
+                                                            {
+                                                                e.is_elect === 1 ? 
+                                                                <span className="list-applied-tag tag-done">passed</span>
+                                                                : <span className="list-applied-tag tag-reject">rejected</span>
+                                                            }
+                                                            
+                                                        </NavLink>
+                                                })
+                                            : <small><i>Not found any applied post.</i></small>
+                                        : <small><i>Not found any applied post.</i></small>
+                                    }
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    
                 </div>
             }
             </div>
+            <div id="toast"><div id="img"><i className={toastIcon}></i></div><div id="desc">{toastMessage}</div></div>
         </div>
         
     );

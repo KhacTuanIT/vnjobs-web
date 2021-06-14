@@ -1,36 +1,45 @@
 import React, {useState, useEffect} from 'react';
 import {NavLink} from 'react-router-dom'
 import * as API from '../../constants/Config';
+import * as API2 from '../../constants/API';
 import axios from 'axios';
 
 const Navbar = () => {
 
   const [user, setUser] = useState(null);
+  const [isLogged, setIsLogged] = useState(localStorage.getItem('is_logged'));
 
   useEffect(() => {
-    if (!user) {
-      axios.get(`${API.API}${API.USER}`, null, {
-        withCredentials: true,
-      }).then(async function (res) {
-        if (res.status === 200) {
-          console.log("RESPONSE: ");
-          console.log(res);
-          console.log("RESPONSE DATA: ");
-          console.log(res.data);
-
-          setUser(res.data);
+    console.log(isLogged)
+      // const cancelTokenSource = axios.CancelToken.source();
+      if (isLogged)
+      {
+        if (!user) {
+          axios.get(API2.USER, {withCredentials: true,}).then(function (res) {
+            if (res.status === 200) {
+              setUser(res.data);
+            }
+            else {
+              console.log("RESPONSE DATA: ");
+              console.log(res);
+            }
+          }).catch(error => {
+            console.log(error)
+            if (error.response !== undefined) {
+              if (error.response.status === 401) {
+                console.log('Not login yet.');
+              }
+            }
+              
+            if (error.message === 'Network Error') {
+              console.log('NETWORK ERR');
+            }
+          })
         }
-        else {
-          console.log(res);
-        }
-      }).catch(error => {
-        if (error.response !== 'undefined')
-          if (error.response.status === 401) {
-            console.log('Not login yet.');
-          }
-      })
-    }
-  }, [user]);
+      } else {
+        setUser(null);
+      }
+  }, [isLogged]);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
