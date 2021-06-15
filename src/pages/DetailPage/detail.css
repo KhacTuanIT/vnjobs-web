@@ -4,7 +4,7 @@
 .applied-popup {
     position: absolute;
     display: inline-block;
-    right: 25%;
+    left: 60%;
     top: 5px;
     background-color: #d9dfdd;
     border-radius: 2px;
