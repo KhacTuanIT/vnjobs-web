@@ -196,3 +196,7 @@
     from {bottom: 30px; opacity: 1;}
     to {bottom: 60px; opacity: 0;}
 }
+
+.card-body h6 {
+    color: #333;
+}

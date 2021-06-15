@@ -66,6 +66,7 @@ const UserProfile = () => {
                 if (payload.status === 200) {
                     // console.log('GET MAJOR LIST:');
                     setMajors(payload.data.data);
+                    setMajorId(payload.data.data[0].id);
                 } 
             } catch (error) {
                 console.log(error);
@@ -86,20 +87,29 @@ const UserProfile = () => {
                         console.log(data);
                         if (data.orgs.length > 0) {
                             tempOr = [...data.orgs];
-                            setOrgs(data.orgs);
+                            tempOr = getUnique(tempOr);
+                            setOrgs(tempOr);
                             setIsMember(true);
                         }
                         if (data.owned_orgs.length > 0) {
                             tempOw = [...data.owned_orgs];
                             setListOwnerOrg(data.owned_orgs);
+                            const orgTemp = data.owned_orgs[0];
                             setOwnerOrg(data.owned_orgs[0]);
+                            setOrgName(orgTemp.org_name);
+                            setOrgPhone(orgTemp.phones);
+                            setTax(orgTemp.tax_id);
+                            setOrgAddress(orgTemp.address);
+                            setDescription(orgTemp.description);
                             setIsOrg(true);
                         }
                         if (data.recruitment_news.length > 0) {
                             setRecruitmentNews(data.recruitment_news);
                         }
                         listOrgTemp = [...tempOw, ...tempOr];
+                        listOrgTemp = getUnique(listOrgTemp);
                         setListOrg(listOrgTemp);
+                        setOrgId(listOrgTemp[0].id);
                         setUserProfile(data);
                         setFirstName(data.first_name);
                         setLastName(data.last_name);
@@ -107,8 +117,8 @@ const UserProfile = () => {
                         setPhone(data.phone);
                         setDob(data.dob);
                         setBio(data.bio);
-                        setFacebook(data.social_facebook);
-                        setLinkedin(data.social_linkedin);
+                        setFacebook(data.social_facebook ?? '');
+                        setLinkedin(data.social_linkedin ?? '');
                     }
                     else {
                         console.log("RESPONSE DATA: ");
@@ -133,6 +143,21 @@ const UserProfile = () => {
         }
         
     }, [userProfile]);
+
+    const getUnique = (data) => {
+        let t = -1;
+        let orgList = [];
+        if (data.length > 0) {
+            data.map((e, i) => {
+                if (t !== e.id) {
+                    orgList.push(e);
+                    t = e.id;
+                }
+            })
+        }
+        
+        return orgList
+    }
 
     useEffect(() => {
             try {
@@ -235,18 +260,135 @@ const UserProfile = () => {
     //
     const handleUpdateUserInfo = () => {
         try {
-            
+            const data = {
+                'first_name': firstName,
+                'last_name': lastName,
+                'phone': phone,
+                'dob': dob,
+                'address': address,
+                'social_facebook': facebook,
+                'social_linkedin': linkedin,
+                'bio': bio,
+                'email': userProfile.email
+            };
+            axios.put(API.USER, data, { withCredentials: true, })
+                .then(res => {
+                    console.log(res.data);
+                    if (res.status === 200) {
+                        setUserProfile(res.data.user);
+                        setTimeout(() => setIsEditInfo(false), 5000);
+                        showToast('success', 'bi bi-info-circle', res.data.message);
+                    }
+                }).catch(error => {
+                    if (error.response !== undefined) {
+                        if (error.response.status === 401) {
+                            showToast('error' , 'bi bi-info-circle', 'Update failed! You are not log in yet.');
+                        }
+                    }
+                    if (error.message === 'Network Error') {
+                        showToast('error' , 'bi bi-info-circle', 'Update failed! Network error.');
+                    }
+                    else {
+                        showToast('error' , 'bi bi-info-circle', error.message);
+                    }
+                })
         } catch (error) {
-            
+            showToast('error' , 'bi bi-info-circle', error.message);
         }
     }
     //
     const handleCreateRecruitmentNews = () => {
-
+        try {
+            const data = {
+                'org_id': orgId,
+                'major_id': majorId,
+                'title': title,
+                'content': content,
+                'address': rnAddress,
+                'city': city,
+                'work_type': workType,
+                'start_time': startTime,
+                'end_time': endTime,
+                'interview_start_time': interviewStartTime,
+                'interview_end_time': interviewEndTime,
+            }
+            axios.post(API.LIST_RECRUITMENT_NEWS, data, { withCredentials: true, })
+                .then(res => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        showToast('success', 'bi bi-info-circle', res.data.message);
+                        let tempRn = [...recruitmentNews, res.data.recruitment_news];
+                        setRecruitmentNews(tempRn);
+                        setTimeout(() => {
+                            clearFormCreateRecruitmentNews();
+                            setIsCreateRecruitmentNews(false);
+                        }, 5000);
+                    }
+                }).catch(error => {
+                    if (error.response !== undefined) {
+                        if (error.response.status === 401) {
+                            showToast('error' , 'bi bi-info-circle', 'Update failed! You are not log in yet.');
+                        }
+                    }
+                    if (error.message === 'Network Error') {
+                        showToast('error' , 'bi bi-info-circle', 'Update failed! Network error.');
+                    }
+                    else {
+                        showToast('error' , 'bi bi-info-circle', error.message);
+                    }
+                })
+        } catch (error) {
+            showToast('error' , 'bi bi-info-circle', error.message);
+        }
     }
     //
     const handleEditOrg = () => {
+        try {
+            const data = {
+                'org_name': orgName,
+                'phones': orgPhone,
+                'tax_id': tax,
+                'address': orgAddress,
+                'description': description
+            }
+            axios.put(API.LIST_ORGANIZATION + '/' + ownerOrg.id, data, {withCredentials: true,})
+                .then(res => {
+                    console.log(res);
+                    if (res.status === 200) {
+                        setOwnerOrg(res.data);
+                        showToast('success', 'bi bi-info-circle', 'Update successfully!');
+                        setTimeout(() => {
+                            setIsEditOrg(false);
+                        }, 5000);
+                    }
+                }).catch(error => {
+                    if (error.response !== undefined) {
+                        if (error.response.status === 401) {
+                            showToast('error' , 'bi bi-info-circle', 'Update failed! You are not log in yet.');
+                        }
+                    }
+                    if (error.message === 'Network Error') {
+                        showToast('error' , 'bi bi-info-circle', 'Update failed! Network error.');
+                    }
+                    else {
+                        showToast('error' , 'bi bi-info-circle', error.message);
+                    }
+                })
+        } catch (error) {
+            showToast('error' , 'bi bi-info-circle', error.message);
+        }
+    }
 
+    const clearFormCreateRecruitmentNews = () => {
+        setTitle('');
+        setContent('');
+        setRnAddress('');
+        setCity('');
+        setWorkType('');
+        setStartTime('');
+        setEndTime('');
+        setInterviewStartTime('');
+        setInterviewEndTime('');
     }
 
     const onClickManageOrg = () => {
@@ -292,7 +434,7 @@ const UserProfile = () => {
                 
                 <div className="col-md-12 mb-3 text-left">
                     <div style={{position: 'relative'}}>
-                        <h4>USER PROFILE</h4>
+                        <h4><i className="bi bi-person-lines-fill"></i> / USER PROFILE</h4>
                         <button className="close-button btn br-6" onClick={() => signOut()}>
                             Sign out <i className="pl-1 bi bi-box-arrow-right"></i>
                         </button>
@@ -325,14 +467,14 @@ const UserProfile = () => {
                                     </svg>
                                     Linkedin
                                 </h6>
-                                { userProfile ? userProfile.social_linkedin ? <NavLink to={userProfile.social_linkedin} className="text-secondary">visit</NavLink> : 'null' : 'null'}
+                                { userProfile ? userProfile.social_linkedin ? <a href={userProfile.social_linkedin} target="_blank" className="text-secondary">visit</a> : 'null' : 'null'}
                             </li>
                             <li className="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                 <h6 className="mb-0 ml-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-facebook mr-2 icon-inline text-primary"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
                                     <span className="ml-2">Facebook</span>
                                 </h6>
-                                {userProfile ? userProfile.social_facebook ? <NavLink to={userProfile.social_facebook} className="text-secondary">visit</NavLink> : 'null' : 'null' }
+                                {userProfile ? userProfile.social_facebook ? <a href={userProfile.social_facebook} target="_blank" className="text-secondary">visit</a> : 'null' : 'null' }
                             </li>
                         </ul>
                     </div>
@@ -573,7 +715,7 @@ const UserProfile = () => {
                                     <h6 className="mb-0">Company</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <select className="form-select" name="org_id_select" defaultValue={listOrg[0].id} onChange={e => setOrgId(e.target.value)}>
+                                    <select className="form-select" name="org_id_select" value={orgId} onChange={e => setOrgId(e.target.value)}>
                                         {
                                             listOrg ? 
                                                 listOrg.map((e, i) => {
@@ -589,7 +731,7 @@ const UserProfile = () => {
                                     <h6 className="mb-0">Major</h6>
                                 </div>
                                 <div className="col-sm-9 text-secondary text-left">
-                                    <select className="form-select" name="major_id" defaultValue={majors[0].id} onChange={e => setMajorId(e.target.value)}>
+                                    <select className="form-select" name="major_id" value={majorId} onChange={e => setMajorId(e.target.value)}>
                                         {
                                             majors ? 
                                                 majors.map((e, i) => {
@@ -885,19 +1027,6 @@ const UserProfile = () => {
                                             : <small><i>Not found any recruitment news</i></small>
                                         : <small><i>Not found any recruitment news</i></small>}
                                     </div>
-                                    <div className="text-left"><small>Your position</small></div>
-                                    <div>
-                                        { orgs ? 
-                                            orgs.length > 0 ? 
-                                                orgs.map((e, i) => {
-                                                    return <div className="text-left list-org-item" key={e.id + '__org__' + makeid(2)}>
-                                                        Work at {e.org_name}
-                                                    </div>
-                                                })
-                                            : <small><i>Not found any your position</i></small>
-                                        : <small><i>Not found any your position</i></small>
-                                        }
-                                    </div>
                                 </div>
                             </div>
                         </div>}
@@ -925,6 +1054,26 @@ const UserProfile = () => {
                                             : <small><i>Not found any applied post.</i></small>
                                         : <small><i>Not found any applied post.</i></small>
                                     }
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-sm-6 mb-3">
+                            <div className="card h-100">
+                                <div className="card-body">
+                                    <h6 className="d-flex align-items-center mb-3">Job Status</h6>
+                                    <hr/>
+                                    <div>
+                                        { orgs ? 
+                                            orgs.length > 0 ? 
+                                                orgs.map((e, i) => {
+                                                    return <div className="text-left list-org-item" key={e.id + '__org__' + makeid(2)}>
+                                                        Work at {e.org_name}
+                                                    </div>
+                                                })
+                                            : <small><i>Not found any your position</i></small>
+                                        : <small><i>Not found any your position</i></small>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
