@@ -1,25 +1,26 @@
 {
   "files": {
-    "main.css": "/static/css/main.95b45fdf.chunk.css",
-    "main.js": "/static/js/main.dad10eeb.chunk.js",
-    "main.js.map": "/static/js/main.dad10eeb.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.25c03314.js",
-    "runtime-main.js.map": "/static/js/runtime-main.25c03314.js.map",
-    "static/js/2.65c3fa7c.chunk.js": "/static/js/2.65c3fa7c.chunk.js",
-    "static/js/2.65c3fa7c.chunk.js.map": "/static/js/2.65c3fa7c.chunk.js.map",
-    "static/js/3.d9d4162c.chunk.js": "/static/js/3.d9d4162c.chunk.js",
-    "static/js/3.d9d4162c.chunk.js.map": "/static/js/3.d9d4162c.chunk.js.map",
+    "main.css": "/static/css/main.27beb1cf.chunk.css",
+    "main.js": "/static/js/main.dec05fe8.chunk.js",
+    "main.js.map": "/static/js/main.dec05fe8.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.47de5852.js",
+    "runtime-main.js.map": "/static/js/runtime-main.47de5852.js.map",
+    "static/js/2.c1846d6b.chunk.js": "/static/js/2.c1846d6b.chunk.js",
+    "static/js/2.c1846d6b.chunk.js.map": "/static/js/2.c1846d6b.chunk.js.map",
+    "static/js/3.5268de8a.chunk.js": "/static/js/3.5268de8a.chunk.js",
+    "static/js/3.5268de8a.chunk.js.map": "/static/js/3.5268de8a.chunk.js.map",
     "index.html": "/index.html",
-    "static/css/main.95b45fdf.chunk.css.map": "/static/css/main.95b45fdf.chunk.css.map",
-    "static/js/2.65c3fa7c.chunk.js.LICENSE.txt": "/static/js/2.65c3fa7c.chunk.js.LICENSE.txt",
+    "static/css/main.27beb1cf.chunk.css.map": "/static/css/main.27beb1cf.chunk.css.map",
+    "static/js/2.c1846d6b.chunk.js.LICENSE.txt": "/static/js/2.c1846d6b.chunk.js.LICENSE.txt",
+    "static/media/App.css": "/static/media/helveticaneue.721fc7aa.ttf",
     "static/media/businessman-standing-with-a-suitcase.65a1f2db.svg": "/static/media/businessman-standing-with-a-suitcase.65a1f2db.svg",
     "static/media/logo.6ce24c58.svg": "/static/media/logo.6ce24c58.svg",
     "static/media/worker-in-front-of-a-computer-monitor.1a6d255d.svg": "/static/media/worker-in-front-of-a-computer-monitor.1a6d255d.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.25c03314.js",
-    "static/js/2.65c3fa7c.chunk.js",
-    "static/css/main.95b45fdf.chunk.css",
-    "static/js/main.dad10eeb.chunk.js"
+    "static/js/runtime-main.47de5852.js",
+    "static/js/2.c1846d6b.chunk.js",
+    "static/css/main.27beb1cf.chunk.css",
+    "static/js/main.dec05fe8.chunk.js"
   ]
 }
