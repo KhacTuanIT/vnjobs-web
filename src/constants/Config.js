@@ -10,3 +10,4 @@ export const ORGANIZATION = '/organizations';
 export const APPLY = '/users/apply';
 export const USER = '/user';
 export const APPLIED = '/user/applied';
+export const FIND_ORGANIZATION = '/organizations/find-by-id';

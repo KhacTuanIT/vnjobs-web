@@ -140,6 +140,7 @@ const UserProfile = () => {
             } catch (error) {
                 console.log(error);
             }
+            window.scrollTo(0, 0);
         }
         
     }, [userProfile]);
@@ -1046,6 +1047,7 @@ const UserProfile = () => {
                                                             {
                                                                 e.is_elect === 1 ? 
                                                                 <span className="list-applied-tag tag-done">passed</span>
+                                                                : e.is_elect === 0 ? <span className="list-applied-tag tag-waiting">waiting</span> 
                                                                 : <span className="list-applied-tag tag-reject">rejected</span>
                                                             }
                                                             

@@ -15,6 +15,8 @@ const DetailPage = (props) => {
     const [expYears, setExpYears] = useState(0);
     const [isSuccess, setIsSucces] = useState(false);
     const [isSending, setIsSending] = useState(false);
+    const [message, setMessage] = useState('');
+    const [isRedirectProfile, setIsRedirectProfile] = useState(false);
 
     const url = props.match.url;
     const arrUrl = url.split('/');
@@ -26,10 +28,6 @@ const DetailPage = (props) => {
             if (jobDetail === null) {
                 console.log("Start get data");
                 setIsLoading(true);
-                const headers = {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
                 const endpoint = API.API + API.RECRUITMENT_NEWS + '/' + idItem;
                 const pl = await axios.get(endpoint);
                 
@@ -45,7 +43,7 @@ const DetailPage = (props) => {
                     }
                     
                     if (!org) {
-                        const ep = API.API + API.ORGANIZATION + '/' + data.org_id;
+                        const ep = API.API + API.FIND_ORGANIZATION + '/' + data.org_id;
                         const opl = await axios.get(ep);
                         const orgData = opl.data;
                         setOrg(orgData);
@@ -104,18 +102,44 @@ const DetailPage = (props) => {
             if (response.status === 200) {
                 setIsSending(true);
                 setIsSucces(true);
+                setMessage('Đã ứng tuyển thành công, vui lòng đợi kết quả');
                 console.log("đã apply")
+                setTimeout(() => {
+                    setIsSending(false);
+                    setMessage('');
+                    setIsRedirectProfile(true);
+                }, 2000);
             } else if (response.status === 201) {
                 setIsSending(true);
                 setIsSucces(true);
+                setMessage('Đã ứng tuyển thành công, vui lòng đợi kết quả');
                 console.log("đã apply")
+                setTimeout(() => {
+                    setIsSending(false);
+                    setMessage('');
+                    setIsRedirectProfile(true);
+                }, 2000);
             }
         } catch (error) {
             if (error.response.status === 401) {
                 setIsSending(true);
                 setIsSucces(false);
+                setMessage('Vui lòng đăng nhập trước khi ứng tuyển!');
+                setTimeout(() => {
+                    setIsSending(false);
+                    setMessage('');
+                    setIsLoggedIn(false);
+                }, 2000);
                 console.log("chưa đăng nhập")
-                setIsLoggedIn(false);
+            }
+            if (error.message === 'Network Error') {
+                setIsSending(true);
+                setIsSucces(false);
+                setMessage('Ứng tuyển thất bại, vui lòng xem lại kết nối mạng');
+                setTimeout(() => {
+                    setIsSending(false);
+                    setMessage('');
+                }, 2000);
             }
             console.log(error.response.status);
         }
@@ -126,7 +150,7 @@ const DetailPage = (props) => {
         const value = target.value;
         setExpYears(value);
     }
-    
+    if (isRedirectProfile) return <Redirect to="/user-profile" />;
     return !isLoggedIn ? <Redirect to="/sign-in" /> : isLoading ? 
         <div className="d-flex justify-content-center loading-wr">
             <div className="spinner-grow" role="status mr-3">
@@ -180,8 +204,8 @@ const DetailPage = (props) => {
                 <div className="header-form-apply container">
                     <h3 className="text-center">APPLY JOB</h3>
                     { isSending ? isSuccess ? 
-                        <span className="applied-popup applied-success">Apply successfully!</span>
-                        : <span className="applied-popup applied-failed">Apply failed!</span>
+                        <span className="applied-popup applied-success">{message}</span>
+                        : <span className="applied-popup applied-failed">{message}</span>
                     : null}
                 </div>
                 

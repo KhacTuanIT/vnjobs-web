@@ -78,6 +78,10 @@
     background-color: darkred;
 }
 
+.tag-waiting {
+    background-color: #ffab00;
+}
+
 #toast {
     visibility: hidden;
     max-width: 50px;
