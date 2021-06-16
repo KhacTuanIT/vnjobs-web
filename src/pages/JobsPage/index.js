@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {NavLink} from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 import * as API from '../../constants/Config';
 
@@ -36,7 +36,7 @@ const JobsPage = () => {
             setIsLoading(false);
             return tempJob;
         }
-        
+
         getJob();
     }, []);
 
@@ -52,7 +52,7 @@ const JobsPage = () => {
                     setIsGetting(false);
                 }, 1000);
             }
-            
+
         } catch (error) {
             console.log(error);
             setIsGetting(false);
@@ -77,10 +77,10 @@ const JobsPage = () => {
         const interviewTime = convertDate(datetime);
         const ld = getDiffDate(new Date(currentDate), new Date(interviewTime));
         return ld > 1
-                ? ld + ' days left'
-                : ld === 1
+            ? ld + ' days left'
+            : ld === 1
                 ? ld + ' day left'
-                : 'Expired'        
+                : 'Expired'
     }
 
     return isLoading ? null : (
@@ -93,10 +93,10 @@ const JobsPage = () => {
                     <div id="carouselExampleIndicators" className="carousel slide" data-bs-ride="carousel">
                         <div className="carousel-inner">
                             {
-                                jobRecent ? 
+                                jobRecent ?
                                     jobRecent.length > 0 ?
                                         jobRecent.map((e, i) => {
-                                            if (i === 0) 
+                                            if (i === 0)
                                                 return <div key={e.id + "__" + i} className='carousel-item active'>
                                                     <NavLink to={'/job-detail/' + e.id} className="link-item">
                                                         <div className="job-item-carousel">
@@ -123,7 +123,7 @@ const JobsPage = () => {
                                                         </div>
                                                     </NavLink>
                                                 </div>
-                                            else 
+                                            else
                                                 return <div key={e.id + "__" + i} className='carousel-item'>
                                                     <NavLink to={'/job-detail/' + e.id} className="link-item">
                                                         <div className="job-item-carousel">
@@ -151,17 +151,17 @@ const JobsPage = () => {
                                                     </NavLink>
                                                 </div>
                                         })
+                                        : null
                                     : null
-                                : null
                             }
                         </div>
                         <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span className="visually-hidden">Previous</span>
+                            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span className="visually-hidden">Previous</span>
                         </button>
                         <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span className="visually-hidden">Next</span>
+                            <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span className="visually-hidden">Next</span>
                         </button>
                     </div>
 
@@ -172,23 +172,23 @@ const JobsPage = () => {
                 <div className="list-jobs-content container">
                     <div className="title-lbc">
                         <ul className="pagination d-flex justify-content-between align-items-center">
-                            {prev !== null ? 
-                            <li className="page-item"><a className="page-link" onClick={() => handleGetJob(prev)}>Previous</a></li>
-                            : <li className="page-item disabled"><NavLink className="page-link" aria-disabled="true" to="#">Previous</NavLink></li>}
+                            {prev !== null ?
+                                <li className="page-item"><a className="page-link" onClick={() => handleGetJob(prev)}>Previous</a></li>
+                                : <li className="page-item disabled"><NavLink className="page-link" aria-disabled="true" to="#">Previous</NavLink></li>}
                             Danh sách tuyển dụng
                             {
                                 next !== null ?
-                                <li className="page-item"><a className="page-link" onClick={() => handleGetJob(next)}>Next</a></li>
-                                : <li className="page-item disabled"><NavLink className="page-link" aria-disabled="true" to="#">Next</NavLink></li>
+                                    <li className="page-item"><a className="page-link" onClick={() => handleGetJob(next)}>Next</a></li>
+                                    : <li className="page-item disabled"><NavLink className="page-link" aria-disabled="true" to="#">Next</NavLink></li>
                             }
                         </ul>
                     </div>
                     <div className="content-lbc">
                         {
-                            !isGetting ? job ? 
-                                job.length > 0 ? 
+                            !isGetting ? job ?
+                                job.length > 0 ?
                                     job.map((e, i) => (
-                                        <NavLink key={e.id} to={{pathname: `/job-detail/${e.id}`, idItem: e.id}} className="link-item">
+                                        <NavLink key={e.id} to={{ pathname: `/job-detail/${e.id}`, idItem: e.id }} className="link-item">
                                             <div className="job-item">
                                                 <div className="title-job-item">
                                                     <img src="images/logo_official.png" />
@@ -211,20 +211,20 @@ const JobsPage = () => {
                                             </div>
                                         </NavLink>
                                     ))
-                                : <div className="text-warning">Not found any items.</div>
-                            : <div className="text-danger">Something wrong, please reload site.</div>
-                            :
-                            <div className="d-flex justify-content-center">
-                                <div className="spinner-grow" role="status mr-3">
-                                    <span className="sr-only">Loading...</span>
+                                    : <div className="text-warning">Not found any items.</div>
+                                : <div className="text-danger">Something wrong, please reload site.</div>
+                                :
+                                <div className="d-flex justify-content-center">
+                                    <div className="spinner-grow" role="status mr-3">
+                                        <span className="sr-only">Loading...</span>
+                                    </div>
+                                    <div className="spinner-grow" role="status mr-3">
+                                        <span className="sr-only">Loading...</span>
+                                    </div>
+                                    <div className="spinner-grow" role="status mr-3">
+                                        <span className="sr-only">Loading...</span>
+                                    </div>
                                 </div>
-                                <div className="spinner-grow" role="status mr-3">
-                                    <span className="sr-only">Loading...</span>
-                                </div>
-                                <div className="spinner-grow" role="status mr-3">
-                                    <span className="sr-only">Loading...</span>
-                                </div>
-                            </div>
                         }
                     </div>
                 </div>

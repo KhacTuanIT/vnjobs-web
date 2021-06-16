@@ -132,7 +132,7 @@ const SignUp = () => {
                                     <h2>Welcome to Sign up</h2>
                                     <RegisterSVG />
                                     <p>You have an account?</p>
-                                    <NavLink to="/sign-in" className="btn btn-white btn-outline-white">Sign In</NavLink>
+                                    <NavLink to="/sign-in" className="btn btn-green btn-outline-white">Sign In</NavLink>
                                 </div>
                             </div>
                             <div className="login-wrap p-4 p-lg-5 order-md-last">
@@ -173,7 +173,7 @@ const SignUp = () => {
                                         <input type="password" value={data.confirm_pwd} onChange={(e) => { setData({ ...data, confirm_pwd: e.target.value }) }} className="form-control" placeholder="Confirm Password" required />
                                     </div>
                                     <div className="form-group">
-                                        <button type="button" onClick={() => { signup() }} disabled={isClickAction} className="form-control btn btn-primary-custom submit px-3">Sign Up</button>
+                                        <button type="button" onClick={() => { signup() }} disabled={isClickAction} className="form-control btn btn-primary-custom submit px-3">SIGN UP</button>
                                     </div>
                                 </form>
                             </div>

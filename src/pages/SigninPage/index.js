@@ -110,7 +110,7 @@ const SignIn = () => {
                                     <h2>Welcome to VNJobs</h2>
                                     <LoginSVG />
                                     <p>Don't have an account?</p>
-                                    <NavLink to="/sign-up" className="btn btn-white btn-outline-white">Sign Up</NavLink>
+                                    <NavLink to="/sign-up" className="btn btn-green btn-outline-white">Sign Up</NavLink>
                                 </div>
                             </div>
                             <div className="login-wrap p-4 p-lg-5">
@@ -136,19 +136,19 @@ const SignIn = () => {
                                         <input type="password" className="form-control" value={password} onChange={(pwd) => { setPassword(pwd.target.value) }} placeholder="Password" required />
                                     </div>
                                     <div className="form-group">
-                                        <button type="button" onClick={() => { login() }} className="form-control btn btn-primary-custom submit px-3">Sign In</button>
+                                        <button type="button" onClick={() => { login() }} className="form-control btn btn-primary-custom submit px-3">SIGN IN</button>
                                     </div>
                                     <div className="form-group d-md-flex">
                                         <div className="w-50 text-left">
-                                            <div className="form-check">
+                                            {/* <div className="form-check">
                                                 <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
                                                 <label className="form-check-label" for="flexCheckDefault">
                                                     Remember me
                                                 </label>
-                                            </div>
+                                            </div> */}
                                         </div>
                                         <div className="w-50 text-md-right">
-                                            <a href="#">Forgot Password</a>
+                                            <a href="#" style={{fontSize: 15, color : "#09333f"}}>Forgot Password</a>
                                         </div>
                                     </div>
                                 </form>

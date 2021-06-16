@@ -2183,7 +2183,7 @@ select.form-control:focus::-ms-value {
     padding-top: calc(0.375rem + 1px);
     padding-bottom: calc(0.375rem + 1px);
     margin-bottom: 0;
-    font-size: inherit;
+    font-size: 15px;
     line-height: 1.5;
 }
 
@@ -2212,6 +2212,7 @@ select.form-control:focus::-ms-value {
     background-color: transparent;
     border: solid transparent;
     border-width: 1px 0;
+    font-size:15px
 }
 
 .form-control-plaintext.form-control-sm,
@@ -5416,12 +5417,14 @@ input[type="button"].btn-block {
 .page-link {
     position: relative;
     display: block;
-    padding: 0.5rem 0.75rem;
+    /* padding: 0.5rem 0.75rem; */
     margin-left: -1px;
     line-height: 1.25;
     color: #007bff;
     background-color: #fff;
     border: 1px solid #dee2e6;
+    cursor: pointer;
+    font-size: 14px;
 }
 
 .page-link:hover {
@@ -11250,11 +11253,12 @@ h5,
     background: #09333f;
     border: 1px solid #09333f;
     color: #fff;
+    transition: .3s all ease;
 }
 
 .btn-primary-custom:hover {
-    background: #1b5b6d;
-    border: 1px solid #1b5b6d;
+    background: #104553;
+    border: 1px solid #104553;
     color: #FFF;
 }
 
@@ -11280,12 +11284,12 @@ h5,
     background: #09333f;
     border: 1px solid #09333f;
     color: #fff;
-    transition: all ease 0.2s;
+    border-radius: 5px!important;
+    transition: .3s all ease;
 }
 
 .btn.btn-green:hover {
-    border: 1px solid #fff;
-    /* background: transparent; */
+    background: #104553;
     color: #fff;
 }
 
