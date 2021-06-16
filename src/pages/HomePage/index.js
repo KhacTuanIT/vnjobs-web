@@ -108,28 +108,29 @@ const HomePage = () => {
                         job.data !== undefined ?
                         job.data.length > 0 ? 
                         job.data.map((e, i) => {
-                            return <NavLink key={e.id} to={{pathname: `/job-detail/${e.id}`, idItem: e.id}} className="link-item">
+                            return <div key={e.id} className="link-item">
                             <div className="job-item">
                                 <div className="title-job-item">
                                     <img src="images/logo_official.png" />
                                     <div className="company-name"></div>
                                 </div>
                                 <div className="right-content">
+                                    <div className="rc-content">
+                                        <div className="title-text col-sm-6 p-0">{e.title}</div>
+                                    </div>
                                     <div className="desc">
                                         <div className="desc-item salary">Negotiative</div>
                                         <div className="desc-item major">{e.major.major_name}</div>
                                         <div className="desc-item type-work">{e.work_type}</div>
-                                    </div>
-                                    <div className="rc-content">
-                                        <div className="title-text col-sm-6 p-0">{e.title}</div>
-                                        <div className="content-button col-sm-6 justify-content-end p-0">
+                                        <div className="desc-item time-left">{getTimeLeft(e.end_time)}</div>
+                                        <div className="content-button col-sm-3 justify-content-end p-0">
                                             <NavLink to={`/job-detail/${e.id}`} className="btn-t btn-link-app">APPLY</NavLink>
                                         </div>
                                     </div>
-                                    <div className="time-left">{getTimeLeft(e.end_time)}</div>
+                                    
                                 </div>
                             </div>
-                        </NavLink>
+                        </div>
                         }) :
                         <div className="d-flex justify-content-center flex-row">
                             <div class="err">4</div>

@@ -116,7 +116,7 @@ body,
 }
 
 .title-job-item img {
-    width: 120px;
+    width: 70px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -131,7 +131,7 @@ body,
 
 .right-content {
     flex: 1;
-    padding: 12px;
+    padding: 5px 12px;
 }
 
 .title-text {
@@ -146,7 +146,7 @@ body,
 }
 
 .desc-item {
-    padding: 10px 44px 10px 0;
+    padding: 3px 44px 3px 0;
 }
 
 .salary {
@@ -165,7 +165,7 @@ body,
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 5px 12px;
+    padding: 3px 12px;
     background-color: rgba(255, 255, 255, .5);
     border-radius: 6px;
     color: #09333f;
@@ -186,12 +186,17 @@ body,
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 14px;
     padding-left: 20px;
     padding-right: 20px;
 }
 
+.btn {
+    padding: 7px 34px!important;
+}
+
 .btn-t {
-    padding: 5px 35px;
+    padding: 3px 35px;
 }
 
 .btn-link-app {
@@ -228,8 +233,14 @@ body,
 }
 
 .time-left {
-    padding-top: 3px;
-    text-align: end;
+    padding: 3px 12px;
+    font-size: 14px;
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    color: #3fafaf;
 }
 
 .job-item-carousel {
@@ -431,6 +442,7 @@ body,
     color: #09333f;
     border-radius: 10px;
     background-color: #f8f9fa;
+    text-align: left;
 }
 
 .err {
@@ -454,4 +466,57 @@ body,
 .loading-wr {
     height: 400px;
     align-items: center;
+}
+
+.nav-link {
+    padding: 4px 12px!important;
+}
+
+.navbar-brand {
+    padding-top: 0!important;
+    padding-bottom: 0!important;
+    font-size: 20px!important;
+}
+
+.me-2 {
+    padding-top: 0!important;
+    padding-bottom: 0!important;
+}
+
+.form-control {
+    height: 36px!important;
+}
+
+.navbar {
+    padding-top: 4px!important;
+    padding-bottom: 4px!important;
+    padding-left: 1rem!important;
+    padding-right: 1rem!important;
+}
+
+@media (min-width: 1400px){
+    .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+        max-width: 1060px;
+    }
+}
+
+.pr-3 {
+    padding-right: 15px;
+}
+
+.page-link {
+    padding-top: 0;
+    padding-bottom: 0;
+    font-size: 16px;
+    color: #09333f;
+    cursor: pointer;
+}
+
+.page-link:hover {
+    color: #09333f;
+}
+
+.list-link ul li,
+.list-link ul li a {
+    font-size: 16px;
 }

@@ -9,32 +9,43 @@ const JobsPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [prev, setPrev] = useState('');
     const [next, setNext] = useState('');
-    const [isGetting, setIsGetting] = useState(false);
+    const [isGetting, setIsGetting] = useState(true);
 
     useEffect(() => {
         const getJob = async () => {
             setIsLoading(true);
-            const payload = await axios.get(`${API.API}${API.RECRUITMENT_NEWS}`);
-            let tempJob = [];
-            let tempJobRecent = [];
-            if (payload.data) {
-                setPrev(payload.data.prev_page_url);
-                setNext(payload.data.next_page_url);
-                if (payload.data.data.length > 0) {
-                    let count = 0;
-                    payload.data.data.map((e, i) => {
-                        if (count < 5) {
-                            tempJobRecent.push(e);
-                            count++;
-                        }
-                        tempJob.push(e);
-                    });
+            try {
+                const payload = await axios.get(`${API.API}${API.RECRUITMENT_NEWS}`);
+                let tempJob = [];
+                let tempJobRecent = [];
+                if (payload.data) {
+                    setPrev(payload.data.prev_page_url);
+                    setNext(payload.data.next_page_url);
+                    if (payload.data.data.length > 0) {
+                        let count = 0;
+                        payload.data.data.map((e, i) => {
+                            if (count < 5) {
+                                tempJobRecent.push(e);
+                                count++;
+                            }
+                            tempJob.push(e);
+                        });
+                    }
                 }
+                setJob(tempJob);
+                setJobRecent(tempJobRecent);
+                setIsLoading(false);
+                setTimeout(() => {
+                    setIsGetting(false);
+                }, 700);
+            
+                return tempJob;
+            } catch (error) {
+                console.log(error.message);
+                setTimeout(() => {
+                    setIsGetting(false);
+                }, 700);
             }
-            setJob(tempJob);
-            setJobRecent(tempJobRecent);
-            setIsLoading(false);
-            return tempJob;
         }
 
         getJob();
@@ -55,7 +66,9 @@ const JobsPage = () => {
 
         } catch (error) {
             console.log(error);
-            setIsGetting(false);
+            setTimeout(() => {
+                setIsGetting(false);
+            }, 1000);
         }
     }
 
@@ -83,7 +96,7 @@ const JobsPage = () => {
                 : 'Expired'
     }
 
-    return isLoading ? null : (
+    return (
         <div>
             <div className="container-fluid list-jobs-wrapper">
                 <div className="list-jobs-content container">
@@ -98,7 +111,7 @@ const JobsPage = () => {
                                         jobRecent.map((e, i) => {
                                             if (i === 0)
                                                 return <div key={e.id + "__" + i} className='carousel-item active'>
-                                                    <NavLink to={'/job-detail/' + e.id} className="link-item">
+                                                    <div className="link-item">
                                                         <div className="job-item-carousel">
                                                             <div className="title-job-item">
                                                                 <div className="company-name">{e.org_name ? e.org_name : null}</div>
@@ -121,11 +134,11 @@ const JobsPage = () => {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </NavLink>
+                                                    </div>
                                                 </div>
                                             else
                                                 return <div key={e.id + "__" + i} className='carousel-item'>
-                                                    <NavLink to={'/job-detail/' + e.id} className="link-item">
+                                                    <div className="link-item">
                                                         <div className="job-item-carousel">
                                                             <div className="title-job-item">
                                                                 <div className="company-name">{e.org_name ? e.org_name : null}</div>
@@ -148,7 +161,7 @@ const JobsPage = () => {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </NavLink>
+                                                    </div>
                                                 </div>
                                         })
                                         : null
@@ -185,46 +198,47 @@ const JobsPage = () => {
                     </div>
                     <div className="content-lbc">
                         {
-                            !isGetting ? job ?
-                                job.length > 0 ?
-                                    job.map((e, i) => (
-                                        <NavLink key={e.id} to={{ pathname: `/job-detail/${e.id}`, idItem: e.id }} className="link-item">
-                                            <div className="job-item">
-                                                <div className="title-job-item">
-                                                    <img src="images/logo_official.png" />
-                                                    <div className="company-name">{e.org_name ? e.org_name : null}</div>
-                                                </div>
-                                                <div className="right-content">
-                                                    <div className="desc">
-                                                        <div className="desc-item salary">Negotiative</div>
-                                                        <div className="desc-item major">{e.major.major_name}</div>
-                                                        <div className="desc-item type-work">{e.work_type}</div>
+                            !isGetting ? 
+                                job ?
+                                    job.length > 0 ?
+                                        job.map((e, i) => (
+                                            <div key={e.id} className="link-item">
+                                                <div className="job-item">
+                                                    <div className="title-job-item">
+                                                        <img src="images/logo_official.png" />
+                                                        <div className="company-name">{e.org_name ? e.org_name : null}</div>
                                                     </div>
-                                                    <div className="rc-content">
-                                                        <div className="title-text col-sm-6 p-0">{e.title}</div>
-                                                        <div className="content-button col-sm-6 justify-content-end p-0">
-                                                            <NavLink to={`/job-detail/${e.id}`} className="btn-t btn-link-app">APPLY</NavLink>
+                                                    <div className="right-content">
+                                                        <div className="rc-content">
+                                                            <div className="title-text col-sm-6 p-0">{e.title}</div>
+                                                        </div>
+                                                        <div className="desc">
+                                                            <div className="desc-item salary">Negotiative</div>
+                                                            <div className="desc-item major">{e.major.major_name}</div>
+                                                            <div className="desc-item type-work">{e.work_type}</div>
+                                                            <div className="desc-item time-left">{getTimeLeft(e.end_time)}</div>
+                                                            <div className="content-button col-sm-3 justify-content-end p-0">
+                                                                <NavLink to={`/job-detail/${e.id}`} className="btn-t btn-link-app">APPLY</NavLink>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div className="time-left">{getTimeLeft(e.end_time)}</div>
                                                 </div>
                                             </div>
-                                        </NavLink>
-                                    ))
+                                        ))
                                     : <div className="text-warning">Not found any items.</div>
                                 : <div className="text-danger">Something wrong, please reload site.</div>
-                                :
-                                <div className="d-flex justify-content-center">
-                                    <div className="spinner-grow" role="status mr-3">
-                                        <span className="sr-only">Loading...</span>
-                                    </div>
-                                    <div className="spinner-grow" role="status mr-3">
-                                        <span className="sr-only">Loading...</span>
-                                    </div>
-                                    <div className="spinner-grow" role="status mr-3">
-                                        <span className="sr-only">Loading...</span>
-                                    </div>
+                            :
+                            <div className="d-flex justify-content-center">
+                                <div className="spinner-grow" role="status mr-3">
+                                    <span className="sr-only">Loading...</span>
                                 </div>
+                                <div className="spinner-grow" role="status mr-3">
+                                    <span className="sr-only">Loading...</span>
+                                </div>
+                                <div className="spinner-grow" role="status mr-3">
+                                    <span className="sr-only">Loading...</span>
+                                </div>
+                            </div>
                         }
                     </div>
                 </div>

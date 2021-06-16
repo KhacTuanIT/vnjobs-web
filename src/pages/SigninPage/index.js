@@ -128,11 +128,11 @@ const SignIn = () => {
                                 <form action="#" className="signin-form">
                                     <div className="form-group mb-3">
                                         <AuthenticateNotify msg={msgError} />
-                                        <label className="label" for="name">Email</label>
+                                        <label className="label" htmlFor="name">Email</label>
                                         <input type="text" className="form-control" value={email} onChange={(e) => { setEmail(e.target.value) }} placeholder="Email" required />
                                     </div>
                                     <div className="form-group mb-3">
-                                        <label className="label" for="password">Password</label>
+                                        <label className="label" htmlFor="password">Password</label>
                                         <input type="password" className="form-control" value={password} onChange={(pwd) => { setPassword(pwd.target.value) }} placeholder="Password" required />
                                     </div>
                                     <div className="form-group">
@@ -142,7 +142,7 @@ const SignIn = () => {
                                         <div className="w-50 text-left">
                                             {/* <div className="form-check">
                                                 <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                                                <label className="form-check-label" for="flexCheckDefault">
+                                                <label className="form-check-label" htmlFor="flexCheckDefault">
                                                     Remember me
                                                 </label>
                                             </div> */}
