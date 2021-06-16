@@ -20,7 +20,7 @@ const DetailPage = (props) => {
 
     const url = props.match.url;
     const arrUrl = url.split('/');
-    const idItem = arrUrl[arrUrl.length-1];
+    const idItem = arrUrl[arrUrl.length - 1];
 
     useEffect(() => {
         console.log(`${API.API}${API.RECRUITMENT_NEWS}/${idItem}`);
@@ -30,9 +30,9 @@ const DetailPage = (props) => {
                 setIsLoading(true);
                 const endpoint = API.API + API.RECRUITMENT_NEWS + '/' + idItem;
                 const pl = await axios.get(endpoint);
-                
+
                 console.log("Getting data");
-                const data= pl.data;
+                const data = pl.data;
                 if (data) {
                     setRnId(data.id);
                     if (!major) {
@@ -41,7 +41,7 @@ const DetailPage = (props) => {
                         const majorData = mpl.data;
                         setMajor(majorData);
                     }
-                    
+
                     if (!org) {
                         const ep = API.API + API.FIND_ORGANIZATION + '/' + data.org_id;
                         const opl = await axios.get(ep);
@@ -82,7 +82,7 @@ const DetailPage = (props) => {
         return jsDate;
     }
 
-    const handleSubmit = async(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             let cover = document.getElementsByName('cover_letter_path')[0].files[0];
@@ -151,7 +151,7 @@ const DetailPage = (props) => {
         setExpYears(value);
     }
     if (isRedirectProfile) return <Redirect to="/user-profile" />;
-    return !isLoggedIn ? <Redirect to="/sign-in" /> : isLoading ? 
+    return !isLoggedIn ? <Redirect to="/sign-in" /> : isLoading ?
         <div className="d-flex justify-content-center loading-wr">
             <div className="spinner-grow" role="status mr-3">
                 <span className="sr-only">Loading...</span>
@@ -163,80 +163,86 @@ const DetailPage = (props) => {
                 <span className="sr-only">Loading...</span>
             </div>
         </div> : (
-        <div>
-            <div className="detail-wrapper container-fluid">
-                <div className="container">
-                    <div className="job-title">{jobDetail ? jobDetail.title : null}</div>
-                    <div className="company">{org ? org.org_name : null}</div>
-                    <div className="city">{jobDetail ? jobDetail.city : null}</div>
-                    <div className="desc-content">
-                        <div className="salary-content row">
-                            <div className="col-sm-2">Salary</div>: Negotiative</div>
-                        <div className="major-content row">
-                            <div className="col-sm-2">Major</div>: {major ? major.major_name : null}</div>
-                        <div className="work-type-content row">
-                            <div className="col-sm-2">Type</div>: {jobDetail ? jobDetail.work_type : null}</div>
-                        <div className="address-content row">
-                            <div className="col-sm-2">Address</div>: {jobDetail ? jobDetail.address : null}</div>
-                        <div className="time-left-content row">
-                            <div className="col-sm-2">Time left</div>: From {jobDetail !== null ? convertDatetime(jobDetail.start_time) : null} - {jobDetail !== null ? convertDatetime(jobDetail.end_time) : null}</div>
+            <div>
+                <div className="detail-wrapper container-fluid">
+                    <div className="container">
+                        <div className="job-title">{jobDetail ? jobDetail.title : null}</div>
+                        <div className="company">{org ? org.org_name : null}</div>
+                        <div className="city">{jobDetail ? jobDetail.city : null}</div>
+                        <div className="desc-content">
+                            <div className="salary-content row">
+                                <div className="col-sm-2">Salary</div>: Negotiative</div>
+                            <div className="major-content row">
+                                <div className="col-sm-2">Major</div>: {major ? major.major_name : null}</div>
+                            <div className="work-type-content row">
+                                <div className="col-sm-2">Type</div>: {jobDetail ? jobDetail.work_type : null}</div>
+                            <div className="address-content row">
+                                <div className="col-sm-2">Address</div>: {jobDetail ? jobDetail.address : null}</div>
+                            <div className="time-left-content row">
+                                <div className="col-sm-2">Time left</div>: From {jobDetail !== null ? convertDatetime(jobDetail.start_time) : null} - {jobDetail !== null ? convertDatetime(jobDetail.end_time) : null}</div>
+                        </div>
+                        <div className="detail-content">
+                            <div className="detail-content-title">
+                                Job description
+                            </div>
+                            <div className="dc-content">
+                                {jobDetail ? jobDetail.content : null}
+                            </div>
+                        </div>
+                        <div className="interview-time">
+                            <div className="it-title">
+                                Interview time
+                            </div>
+                            <div className="it-content">
+                                From {jobDetail !== null ? convertDatetime(jobDetail.interview_start_time) : null} - {jobDetail !== null ? convertDatetime(jobDetail.interview_end_time) : null}
+                            </div>
+                        </div>
                     </div>
-                    <div className="detail-content">
-                        <div className="detail-content-title">
-                            Job description
-                        </div>
-                        <div className="dc-content">
-                            {jobDetail ? jobDetail.content : null}
-                        </div>
-                    </div>
-                    <div className="interview-time">
-                        <div className="it-title">
-                            Interview time
-                        </div>
-                        <div className="it-content">
-                            From {jobDetail !== null ? convertDatetime(jobDetail.interview_start_time) : null} - {jobDetail !== null ? convertDatetime(jobDetail.interview_end_time) : null}
-                        </div>
-                    </div>
+
                 </div>
-                
-            </div>
-            <div className="container-fluid">
-                <div className="header-form-apply container">
-                    <h3 className="text-center">APPLY JOB</h3>
-                    { isSending ? isSuccess ? 
-                        <span className="applied-popup applied-success">{message}</span>
-                        : <span className="applied-popup applied-failed">{message}</span>
-                    : null}
+                <div className="container-fluid">
+                    <div className="header-form-apply container">
+                        <h3 className="text-center">APPLY JOB</h3>
+                        {isSending ? isSuccess ?
+                            <span className="applied-popup applied-success">{message}</span>
+                            : <span className="applied-popup applied-failed">{message}</span>
+                            : null}
+                    </div>
+
+                    <form onSubmit={handleSubmit} action="https://api.vnjobs.tk/api/v1/users/apply" method="POST" encType="multipart/form-data" className="apply container col-sm-6">
+                        <input type="hidden" name="rn_id" value={jobDetail ? jobDetail.id : null} />
+                        <div className="mb-3 row">
+                            <label className="col-sm-2 col-form-label">Exp years: </label>
+                            <div className="col-sm-10">
+                                <input type="number" name="exp_years" className="phoenix-form form-control-plaintext" min="0" max="50" value={expYears} onChange={handleChange} />
+                            </div>
+                        </div>
+                        <div className="mb-3 row">
+                            <label className="col-sm-2 col-form-label">CV: </label>
+                            <div className="col-sm-10 text-left">
+                                <label for="cv_path" class="custom-file-upload">
+                                    Upload CV
+                                </label>
+                                <input type="file" id="cv_path" name="cv_path" className="" />
+                            </div>
+                        </div>
+                        <div className="mb-3 row">
+                            <label className="col-sm-2 col-form-label">Cover letter: </label>
+                            <div className="col-sm-10 text-left">
+                                <label for="cover_letter_path" class="custom-file-upload">
+                                    Upload Cover letter
+                                </label>
+                                <input type="file" id="cover_letter_path" name="cover_letter_path" className="form-control-plaintext" />
+                            </div>
+                        </div>
+                        <div className="justify-content-center d-flex">
+                            <button className="btn-t btn-link-app-active" type="submit">SEND</button>
+                        </div>
+
+                    </form>
                 </div>
-                
-                <form onSubmit={handleSubmit} action="https://api.vnjobs.tk/api/v1/users/apply" method="POST" encType="multipart/form-data" className="apply container col-sm-6">
-                    <input type="hidden" name="rn_id" value={jobDetail ? jobDetail.id : null} />
-                    <div className="mb-3 row">
-                        <label className="col-sm-2 col-form-label">Exp years: </label>
-                        <div className="col-sm-10">
-                        <input type="number" name="exp_years" className="form-control-plaintext input-form" min="0" max="50" value={expYears} onChange={handleChange}/>
-                        </div>
-                    </div>
-                    <div className="mb-3 row">
-                        <label className="col-sm-2 col-form-label">CV: </label>
-                        <div className="col-sm-10">
-                        <input type="file" id="cv_path" name="cv_path" className="form-control-plaintext"/>
-                        </div>
-                    </div>
-                    <div className="mb-3 row">
-                        <label className="col-sm-2 col-form-label">Cover letter: </label>
-                        <div className="col-sm-10">
-                        <input type="file" id="cover_letter_path" name="cover_letter_path" className="form-control-plaintext"/>
-                        </div>
-                    </div>
-                    <div className="justify-content-center d-flex">
-                        <button className="btn-t btn-link-app" type="submit">SEND</button>
-                    </div>
-                    
-                </form>
             </div>
-        </div>
-    );
+        );
 }
 
 export default DetailPage;

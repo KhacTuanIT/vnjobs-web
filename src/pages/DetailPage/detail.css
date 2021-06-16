@@ -28,3 +28,32 @@
 .applied-failed {
     color: red;
 }
+
+.phoenix-form{
+    border: 1px solid #09333f!important;
+    padding-left: 7px;
+    padding-right: 7px;
+    background-color: #ffffff !important;
+    border-radius: 4px;
+    border: 1px solid #09333f!important;
+    outline: none;
+}
+
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    border: 1px solid #09333f;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 15px;
+    border-radius: 5px;
+    color: #09333f;
+}
+
+.custom-file-upload:hover {
+    background-color: #09333f;
+    color: #FFF;
+    transition: .3s all ease;
+}
