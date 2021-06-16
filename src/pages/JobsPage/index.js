@@ -110,7 +110,7 @@ const JobsPage = () => {
                                     jobRecent.length > 0 ?
                                         jobRecent.map((e, i) => {
                                             if (i === 0)
-                                                return <div key={e.id + "__" + i} className='carousel-item active'>
+                                                return <NavLink to={'/job-detail/' + e.id} key={e.id + "__" + i} className='carousel-item active'>
                                                     <div className="link-item">
                                                         <div className="job-item-carousel">
                                                             <div className="title-job-item">
@@ -123,9 +123,6 @@ const JobsPage = () => {
                                                                 </div>
                                                                 <div className="time-left">{getTimeLeft(e.end_time)}</div>
                                                             </div>
-                                                            <div className="content-button">
-                                                                <NavLink to={'/job-detail/' + e.id} className="btn-t btn-link-app">APPLY</NavLink>
-                                                            </div>
                                                             <div className="right-content">
                                                                 <div className="rc-content">
                                                                     <div className="content-text">
@@ -135,9 +132,9 @@ const JobsPage = () => {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </NavLink>
                                             else
-                                                return <div key={e.id + "__" + i} className='carousel-item'>
+                                                return <NavLink to={'/job-detail/' + e.id} key={e.id + "__" + i} className='carousel-item'>
                                                     <div className="link-item">
                                                         <div className="job-item-carousel">
                                                             <div className="title-job-item">
@@ -150,9 +147,6 @@ const JobsPage = () => {
                                                                 </div>
                                                                 <div className="time-left">{getTimeLeft(e.end_time)}</div>
                                                             </div>
-                                                            <div className="content-button">
-                                                                <NavLink to={'/job-detail/' + e.id} className="btn-t btn-link-app">APPLY</NavLink>
-                                                            </div>
                                                             <div className="right-content">
                                                                 <div className="rc-content">
                                                                     <div className="content-text">
@@ -162,7 +156,7 @@ const JobsPage = () => {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </NavLink>
                                         })
                                         : null
                                     : null
