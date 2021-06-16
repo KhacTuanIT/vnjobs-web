@@ -1,5 +1,5 @@
-export const API = 'https://api.vnjob.work/api/v1';
-// export const API = 'http://127.0.0.1:8000/api/v1';
+// export const API = 'https://api.vnjob.work/api/v1';
+export const API = 'http://127.0.0.1:8000/api/v1';
 export const RECRUITMENT_NEWS = '/recruitment-news';
 export const SIGN_IN = '/auth/login';
 export const SIGN_UP = '/auth/register';

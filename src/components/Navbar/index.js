@@ -11,34 +11,34 @@ const Navbar = () => {
 
   useEffect(() => {
     console.log(isLogged)
-      // const cancelTokenSource = axios.CancelToken.source();
-      if (isLogged)
-      {
-        if (!user) {
-          axios.get(API2.USER, {withCredentials: true,}).then(function (res) {
-            if (res.status === 200) {
-              setUser(res.data);
+    const intervalF = setInterval(() => {
+      setIsLogged(localStorage.getItem('is_logged'))
+    }, 2000);
+    if (isLogged) {
+      try {
+        axios.get(API2.USER, {withCredentials: true,}).then(function (res) {
+          if (res.status === 200) {
+            setUser(res.data);
+            clearInterval(intervalF);
+          }
+          else {
+            console.log("RESPONSE DATA: ");
+          }
+        }).catch(error => {
+          if (error.response !== undefined) {
+            if (error.response.status === 401) {
+              console.log('Not login yet.');
             }
-            else {
-              console.log("RESPONSE DATA: ");
-              console.log(res);
-            }
-          }).catch(error => {
-            console.log(error)
-            if (error.response !== undefined) {
-              if (error.response.status === 401) {
-                console.log('Not login yet.');
-              }
-            }
-              
-            if (error.message === 'Network Error') {
-              console.log('NETWORK ERR');
-            }
-          })
-        }
-      } else {
-        setUser(null);
+          }
+            
+          if (error.message === 'Network Error') {
+            console.log('NETWORK ERR');
+          }
+        })
+      } catch (error) {
+        console.log('Network Err');
       }
+    }
   }, [isLogged]);
 
   return (

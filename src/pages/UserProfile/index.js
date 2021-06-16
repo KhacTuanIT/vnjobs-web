@@ -87,7 +87,7 @@ const UserProfile = () => {
                         console.log(data);
                         if (data.orgs.length > 0) {
                             tempOr = [...data.orgs];
-                            tempOr = getUnique(tempOr);
+                            tempOr = [...getUnique(tempOr)];
                             setOrgs(tempOr);
                             setIsMember(true);
                         }
@@ -107,7 +107,7 @@ const UserProfile = () => {
                             setRecruitmentNews(data.recruitment_news);
                         }
                         listOrgTemp = [...tempOw, ...tempOr];
-                        listOrgTemp = getUnique(listOrgTemp);
+                        listOrgTemp = [...getUnique(listOrgTemp)];
                         setListOrg(listOrgTemp);
                         setOrgId(listOrgTemp[0].id);
                         setUserProfile(data);

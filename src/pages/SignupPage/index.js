@@ -10,11 +10,11 @@ import useLocalStorage from '../../utils/useLocalStorage';
 
 const SignUp = () => {
     const [data, setData] = useState({
-        first_name: null,
-        last_name: null,
-        email: null,
-        password: null,
-        confirm_pwd: null
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: '',
+        confirm_pwd: ''
     });
     const [isClickAction, setIsClickAction] = useState(false);
     const [msgError, setMsgError] = useState("");
@@ -150,26 +150,26 @@ const SignUp = () => {
                                 <form action="#" className="signin-form">
                                     <div className="form-group mb-3">
                                         <AuthenticateNotify msg={msgError} color="red" />
-                                        <label className="label" for="name">Email</label>
+                                        <label className="label" htmlFor="name">Email</label>
                                         <input type="text" value={data.email} onChange={(e) => { setData({ ...data, email: e.target.value }) }} className="form-control" placeholder="Email" required />
                                     </div>
                                     <div className="form-group d-flex">
                                         <div className="form-group mb-3 w-40 mr-2">
-                                            <label className="label" for="name">First name</label>
+                                            <label className="label" htmlFor="name">First name</label>
                                             <input type="text" value={data.first_name} onChange={(e) => { setData({ ...data, first_name: e.target.value }) }} className="form-control" placeholder="First name" required />
                                         </div>
                                         <div className="form-group mb-3 w-40 ml-2">
-                                            <label className="label" for="name">Last name</label>
+                                            <label className="label" htmlFor="name">Last name</label>
                                             <input type="text" value={data.last_name} onChange={(e) => { setData({ ...data, last_name: e.target.value }) }} className="form-control" placeholder="Last name" required />
                                         </div>
 
                                     </div>
                                     <div className="form-group mb-3">
-                                        <label className="label" for="password">Password</label>
+                                        <label className="label" htmlFor="password">Password</label>
                                         <input type="password" value={data.password} onChange={(e) => { setData({ ...data, password: e.target.value }) }} className="form-control" placeholder="Password" required />
                                     </div>
                                     <div className="form-group mb-3">
-                                        <label className="label" for="password">Confirm Password</label>
+                                        <label className="label" htmlFor="password">Confirm Password</label>
                                         <input type="password" value={data.confirm_pwd} onChange={(e) => { setData({ ...data, confirm_pwd: e.target.value }) }} className="form-control" placeholder="Confirm Password" required />
                                     </div>
                                     <div className="form-group">
