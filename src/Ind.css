@@ -520,3 +520,67 @@ body,
 .list-link ul li a {
     font-size: 16px;
 }
+
+.search-form {
+    background-color: #f8f9fa;
+    color: #09333f;
+    height: 300px;
+    text-align: center;
+    padding: 10px;
+}
+
+.search-item{
+    margin-right: 10px;
+}
+
+.search-home .text-search{
+    border-radius: 5px;
+    border: 1px solid #09333f;
+    outline: none;
+    font-size: 18px;
+    padding: 0 5px;
+    color: #09333f;
+}
+
+.text-search::placeholder{
+    color: #09333f;
+
+}
+
+.search-home .city-select{
+    font-size: 18px!important;
+    outline: none!important;
+    border: 1px solid #09333f;
+    color: #09333f;
+
+}
+
+.city-select:focus{
+    outline: none!important;
+    box-shadow: none;
+}
+
+option{
+    color: #09333f;
+    font-size: 18px!important;
+}
+
+.search-home .btn-search{
+    background-color: #09333f;
+    color: #FFF;
+    font-size: 18px;
+    border-radius: 5px!important;
+}
+
+.major-rec-item{
+    padding: 5px 20px;
+    font-size: 14px;
+    background-color: #09333f;
+    color: #FFF;
+    margin-top: 35px;
+    margin-right: 5px;
+    margin-left: 13.2px;
+    border-radius: 5px;
+    cursor: pointer;
+
+}
