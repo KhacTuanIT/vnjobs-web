@@ -14,7 +14,7 @@ const routes = [
     {
         path: '/job-detail/:id',
         exact: true,
-        main: ({match}) => <DetailPage match={match} />
+        main: ({ match }) => <DetailPage match={match} />
     },
     {
         path: '/sign-in',
@@ -35,7 +35,7 @@ const routes = [
         path: '/user-profile',
         exact: true,
         main: () => <UserProfile />
-    }
+    },
 ];
 
 export default routes;

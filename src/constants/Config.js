@@ -11,3 +11,5 @@ export const APPLY = '/users/apply';
 export const USER = '/user';
 export const APPLIED = '/user/applied';
 export const FIND_ORGANIZATION = '/organizations/find-by-id';
+export const SEARCH = '/search'
+export const FIND_BY_MAJOR = '/recruitment-news-by-major'
