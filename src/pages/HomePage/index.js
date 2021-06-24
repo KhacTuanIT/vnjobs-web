@@ -8,6 +8,10 @@ const HomePage = () => {
 
     const [job, setJob] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [majors, setMajors] = useState([]);
+    const [titleSearch, setTitleSearch] = useState('');
+    const [citySearch, setCitySearch] = useState('');
+    const [msgTitle, setMsgTitle] = useState('');
 
     useEffect(() => {
         const getJob = async () => {
@@ -20,9 +24,74 @@ const HomePage = () => {
             }
 
         }
+
+        const getMajors = () => {
+            axios.get(`${API.API}${API.MAJOR}`)
+                .then(res => {
+                    setMajors(res.data.data);
+                })
+                .catch();
+        }
+
         getJob();
+        getMajors();
+        setMsgTitle('Danh sách tuyển dụng mới nhất');
     }, []);
 
+    const search = () => {
+        setIsLoading(true);
+        if (titleSearch.length <= 0 && citySearch.length <= 0) {
+            axios.get(`${API.API}${API.RECRUITMENT_NEWS}`).then(response => {
+                setJob(response.data);
+                setMsgTitle('Danh sách tuyển dụng mới nhất');
+                setIsLoading(false);
+            });
+        }
+        else {
+            let data = null;
+
+            titleSearch <= 0 ? data = { city: citySearch } : data = { city: citySearch, title: titleSearch };
+            axios.post(`${API.API}${API.SEARCH}`,
+                data
+            ).then(res => {
+                setMsgTitle('Kết quả tìm kiếm công việc liên quan');
+                setJob(res.data);
+                setIsLoading(false);
+            })
+                .catch(function (error) {
+                    console.log("error");
+                    if (error.response) {
+                        console.log(error.response.data);
+                        console.log(error.response.status);
+                    }
+                    setIsLoading(false);
+                });
+
+        }
+    }
+
+    const searchWithMajor = (majorName) => {
+        axios.get(`${API.API}${API.FIND_BY_MAJOR}`)
+            .then(res => {
+                setMsgTitle('Kết quả tìm kiếm ngành nghề liên quan');
+                res.data.map((e, i) => {
+                    if (e.major_name == majorName) {
+                        let data = e.recruitment_news;
+                        for (const key in data) { data[key].major = { major_name: majorName } }
+                        setJob({ data });
+                    }
+                })
+                setIsLoading(false);
+            })
+            .catch(function (error) {
+                console.log("error_in_search_with_major");
+                if (error.response) {
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                }
+                setIsLoading(false);
+            });
+    }
     // const getOrg = async (id) => {
     //     console.log(`${API.API}${API.ORGANIZATION}/${id}`);
     //     const payload = await axios.get(`${API.API}${API.ORGANIZATION}/${id}`)
@@ -72,30 +141,31 @@ const HomePage = () => {
             <div className="search-form">
                 <div className="title-ic">Tìm kiếm công việc ngay </div>
                 <div className="d-flex justify-content-center container search-home">
-                    <input type="text" className="search-item text-search w-50" placeholder="Tên công việc" />
-                    <select class="search-item city-select form-select w-25">
-                        <option selected>Thành phố...</option>
-                        <option>Hà Nội</option>
-                        <option>Đà Nẵng</option>
-                        <option>TP Hồ Chí Minh</option>
-                        <option>Khác</option>
+                    <input type="text" className="search-item text-search w-50" onChange={t => (setTitleSearch(t.target.value))} placeholder="Tên công việc" />
+                    <select class="search-item city-select form-select w-25" value={citySearch} onChange={e => { setCitySearch(e.target.value) }}>
+                        <option value="">Thành phố...</option>
+                        <option value="Hà Nội">Hà Nội</option>
+                        <option value="Đà Nẵng">Đà Nẵng</option>
+                        <option value="Hồ Chí Minh">TP Hồ Chí Minh</option>
+                        <option value="">Khác</option>
                     </select>
-                    <NavLink to="/" className="btn btn-search">Tìm kiếm</NavLink>
+                    <div onClick={() => search()} className="btn btn-search">Tìm kiếm</div>
                 </div>
                 <div className="list-major-recommend d-flex justify-content-center container">
-                    <div className="major-rec-item">IT</div>
-                    <div className="major-rec-item">Kế Toán</div>
-                    <div className="major-rec-item">Tạp vụ</div>
-                    <div className="major-rec-item">Lễ Tân</div>
-                    <div className="major-rec-item">Tài xế</div>
-                    <div className="major-rec-item">Giúp việc</div>
+                    {
+                        majors.map(item => (
+                            <div onClick={() => {
+                                searchWithMajor(item.major_name);
+                            }} className="major-rec-item">{item.major_name}</div>
+                        ))
+                    }
                 </div>
 
             </div>
             <div className="container-fluid list-jobs-wrapper">
                 <div className="list-jobs-content container">
                     <div className="title-lbc">
-                        Danh sách tuyển dụng mới nhất
+                        {msgTitle}
                     </div>
                     <div className="content-lbc">
                         {
@@ -111,7 +181,7 @@ const HomePage = () => {
                                                     </div>
                                                     <div className="right-content">
                                                         <div className="rc-content">
-                                                            <div className="title-text col-sm-6 p-0">{e.title}</div>
+                                                            <div className="title-text col-sm-6 p-0">{e.title} ({e.city})</div>
                                                         </div>
                                                         <div className="desc">
                                                             <div className="desc-item salary">Negotiative</div>
