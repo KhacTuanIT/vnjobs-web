@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import {NavLink} from 'react-router-dom'
-import * as API from '../../constants/Config';
 import * as API2 from '../../constants/API';
 import axios from 'axios';
 

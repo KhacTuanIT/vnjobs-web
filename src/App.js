@@ -1,6 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
-import {Switch, Route, BrowserRouter as Router, useLocation } from 'react-router-dom';
+import {Switch, Route, BrowserRouter as Router } from 'react-router-dom';
 import routes from './routes';
 import Navbar from './components/Navbar/index';
 import Footer from './components/Footer/index';

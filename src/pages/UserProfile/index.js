@@ -22,6 +22,8 @@ const UserProfile = () => {
     const [isManageOrg, setIsManageOrg] = useState(false);
     const [majors, setMajors] = useState(null);
     const [isLogged, setIsLogged] = useState(false);
+    const [candidates, setCandidates] = useState(null);
+    const [members, setMembers] = useState(null);
 
     // User info variable
     const [firstName, setFirstName] = useState('');
@@ -58,6 +60,12 @@ const UserProfile = () => {
     const [toastIcon, setToastIcon] = useState('');
     const [toastMessage, setToastMessage] = useState('helllo');
 
+    const [permission, setPermission] = useState(false);
+    const [titleModal, setTitleModal] = useState('');
+
+    // Add employee
+    const [userId, setUserId] = useState(0);
+    const [role, setRole] = useState(2);
 
     useEffect(async() => {
         if (!majors) {
@@ -69,7 +77,7 @@ const UserProfile = () => {
                     setMajorId(payload.data.data[0].id);
                 } 
             } catch (error) {
-                console.log(error);
+                showToast('error' , 'bi bi-info-circle', error.message);
             }
         }
     }, [majors]);
@@ -84,7 +92,6 @@ const UserProfile = () => {
                         let tempOw = [];
                         let tempOr = [];
                         const data = res.data;
-                        console.log(data);
                         if (data.orgs.length > 0) {
                             tempOr = [...data.orgs];
                             tempOr = [...getUnique(tempOr)];
@@ -105,11 +112,12 @@ const UserProfile = () => {
                         }
                         if (data.recruitment_news.length > 0) {
                             setRecruitmentNews(data.recruitment_news);
+                            setIsMember(true);
                         }
                         listOrgTemp = [...tempOw, ...tempOr];
                         listOrgTemp = [...getUnique(listOrgTemp)];
                         setListOrg(listOrgTemp);
-                        setOrgId(listOrgTemp[0].id);
+                        setOrgId(listOrgTemp[0] ? listOrgTemp[0].id : '');
                         setUserProfile(data);
                         setFirstName(data.first_name);
                         setLastName(data.last_name);
@@ -121,14 +129,11 @@ const UserProfile = () => {
                         setLinkedin(data.social_linkedin ?? '');
                     }
                     else {
-                        console.log("RESPONSE DATA: ");
-                        console.log(res);
                     }
                 }).catch(error => {
                     console.log(error)
                     if (error.response !== undefined) {
                         if (error.response.status === 401) {
-                            console.log('Not login yet.');
                             setIsLogged(true);
                         }
                     }
@@ -138,7 +143,7 @@ const UserProfile = () => {
                     }
                 })
             } catch (error) {
-                console.log(error);
+                showToast('error' , 'bi bi-info-circle', error.message);
             }
             window.scrollTo(0, 0);
         }
@@ -168,8 +173,6 @@ const UserProfile = () => {
                     withCredentials: true,
                 }).then(res => {
                     if (res.status === 200) {
-                        console.log('GET APPLIED LIST');
-                        console.log(res);
                         setApplied(res.data);
                     }
                 })
@@ -177,7 +180,6 @@ const UserProfile = () => {
             } catch (error) {
                 if (error.response !== 'undefined') {
                     if (error.response.status === 401) {
-                        console.log('User not login yet.');
                         setIsLogged(true);
                     }
                 }
@@ -225,14 +227,24 @@ const UserProfile = () => {
                 }
             })
                 .then(res => {
-                    console.log(res);
                     if (res.status === 200) {
-                        setOwnerOrg(res.data);
+                        let d = listOwnerOrg;
+                        if (d) {
+                            d.push(res.data);
+                            setOwnerOrg(d[0]);
+                        } else {
+                            d = [res.data];
+                            setOwnerOrg(res.data);
+                        }
+                        setListOwnerOrg(d);
                         setIsOrg(true);
-                        showToast('success', 'bi bi-info-circle', 'Create Organization successfully! Waiting for admin verify.')
+                        showToast('success', 'bi bi-info-circle', 'Create Organization successfully!')
+                        setTimeout(() => {
+                            clearFormCreateOrg();
+                            setIsCreateOrg(false);
+                        }, 5000);
                     }
                 }).catch(error => {
-                    console.log(error);
                     if (error.response !== undefined) {
                         if (error.response.status === 401) {
                             showToast('error' , 'bi bi-info-circle', 'Create failed! You are not log in yet.');
@@ -274,7 +286,6 @@ const UserProfile = () => {
             };
             axios.put(API.USER, data, { withCredentials: true, })
                 .then(res => {
-                    console.log(res.data);
                     if (res.status === 200) {
                         setUserProfile(res.data.user);
                         setTimeout(() => setIsEditInfo(false), 5000);
@@ -315,7 +326,6 @@ const UserProfile = () => {
             }
             axios.post(API.LIST_RECRUITMENT_NEWS, data, { withCredentials: true, })
                 .then(res => {
-                    console.log(res);
                     if (res.status === 200) {
                         showToast('success', 'bi bi-info-circle', res.data.message);
                         let tempRn = [...recruitmentNews, res.data.recruitment_news];
@@ -328,11 +338,11 @@ const UserProfile = () => {
                 }).catch(error => {
                     if (error.response !== undefined) {
                         if (error.response.status === 401) {
-                            showToast('error' , 'bi bi-info-circle', 'Update failed! You are not log in yet.');
+                            showToast('error' , 'bi bi-info-circle', 'Create failed! You are not log in yet.');
                         }
                     }
                     if (error.message === 'Network Error') {
-                        showToast('error' , 'bi bi-info-circle', 'Update failed! Network error.');
+                        showToast('error' , 'bi bi-info-circle', 'Create failed! Network error.');
                     }
                     else {
                         showToast('error' , 'bi bi-info-circle', error.message);
@@ -354,7 +364,6 @@ const UserProfile = () => {
             }
             axios.put(API.LIST_ORGANIZATION + '/' + ownerOrg.id, data, {withCredentials: true,})
                 .then(res => {
-                    console.log(res);
                     if (res.status === 200) {
                         setOwnerOrg(res.data);
                         showToast('success', 'bi bi-info-circle', 'Update successfully!');
@@ -380,6 +389,14 @@ const UserProfile = () => {
         }
     }
 
+    const clearFormCreateOrg = () => {
+        setOrgName('');
+        setOrgPhone('');
+        setOrgAddress('');
+        setTax('');
+        setDescription('');
+    }
+
     const clearFormCreateRecruitmentNews = () => {
         setTitle('');
         setContent('');
@@ -392,7 +409,13 @@ const UserProfile = () => {
         setInterviewEndTime('');
     }
 
+    const clearFormAddMember = () => {
+        setUserId(0);
+        setRole(2);
+    }
+
     const onClickManageOrg = () => {
+        getMembers(ownerOrg.id);
         setIsManageOrg(true);
         setIsCreateRecruitmentNews(false);
     }
@@ -418,8 +441,7 @@ const UserProfile = () => {
         var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         var charactersLength = characters.length;
         for ( var i = 0; i < length; i++ ) {
-          result += characters.charAt(Math.floor(Math.random() * 
-     charactersLength));
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
        }
        return result;
     }
@@ -427,6 +449,149 @@ const UserProfile = () => {
     const handleOnChangeSelect = (e) => {
         const value = e.target.value;
         setOwnerOrg(value);
+    }
+
+    const showCandidate = (rnId) => {
+        try {
+            axios.get(API.LIST_JOBSEEKER_BY_RECRUITMENT_NEWS + '/' + rnId, {withCredentials: true})
+                .then(res => {
+                    if (res.status === 200) {
+                        setCandidates(res.data.job_seekers);
+                        setPermission(true);
+                        setTitleModal(res.data.title)
+                    }
+                }).catch(error => {
+                    setCandidates(null);
+                    if (error.response !== undefined) {
+                        if (error.response.status === 403) {
+                            setPermission(false);
+                            setTitleModal("Detail candidates")
+                        }
+                    }
+                })
+        } catch (error) {
+            setCandidates(null);
+            if (error.response !== undefined) {
+                if (error.response.status === 401) {
+                    showToast('error' , 'bi bi-info-circle', 'Get information failed! You are not log in yet.');
+                }
+                if (error.response.status === 403) {
+                    console.log("403")
+                    setPermission(false);
+                }
+            }
+            if (error.message === 'Network Error') {
+                showToast('error' , 'bi bi-info-circle', 'Get information failed! Network error.');
+            }
+            else {
+                showToast('error' , 'bi bi-info-circle', error.message);
+            }
+        }
+    }
+
+    const confirmJobseeker = (data) => {
+        try {
+            data.is_elect = 1;
+            axios.put(API.LIST_JOBSEEKER + '/' + data.id, data, {withCredentials: true})
+                .then((res) => {
+                    if (res.status === 200) {
+                        showCandidate(data.rn_id);
+                    }
+                }).catch(error => {
+                    if (error.response !== undefined) {
+                        if (error.response.status === 401) {
+                            showToast('error' , 'bi bi-info-circle', 'Update failed! You are not log in yet.');
+                        }
+                    }
+                    if (error.message === 'Network Error') {
+                        showToast('error' , 'bi bi-info-circle', 'Update failed! Network error.');
+                    }
+                    else {
+                        showToast('error' , 'bi bi-info-circle', error.message);
+                    }
+                })
+        } catch (error) {
+            if (error.response !== undefined) {
+                if (error.response.status === 401) {
+                    showToast('error' , 'bi bi-info-circle', 'Update failed! You are not log in yet.');
+                }
+            }
+            if (error.message === 'Network Error') {
+                showToast('error' , 'bi bi-info-circle', 'Update failed! Network error.');
+            }
+            else {
+                showToast('error' , 'bi bi-info-circle', error.message);
+            }
+        }
+    }
+
+    const getMembers = (id) => {
+        try {
+            axios.get(API.MEMBERSHIP + '?org_id='+id, {withCredentials: true})
+                .then(res => {
+                    if (res.status === 200) {
+                        setMembers(res.data.users);
+                    }
+                }).catch(error => {
+                    console.log(error.message);
+                }) 
+        } catch (error) {
+            if (error.response !== undefined) {
+                if (error.response.status === 401) {
+                    showToast('error' , 'bi bi-info-circle', 'Add failed! You are not log in yet.');
+                }
+            }
+            if (error.message === 'Network Error') {
+                showToast('error' , 'bi bi-info-circle', 'Add failed! Network error.');
+            }
+            else {
+                showToast('error' , 'bi bi-info-circle', error.message);
+            }
+        }
+    }
+
+    const addEmployee = () => {
+        try {
+            const data = {
+                org_id: ownerOrg.id,
+                user_id: userId,
+                role_id: role
+            }
+            axios.post(API.MEMBERSHIP, data, {withCredentials: true})
+                .then(res => {
+                    if (res.status === 200) {
+                        showToast('success' , 'bi bi-info-circle', res.data.message);
+                        getMembers(ownerOrg.id);
+                        setTimeout(() => {
+                            clearFormAddMember();
+                        }, 5000);
+                    }
+                }).catch(error => {
+                    if (error.response !== undefined) {
+                        if (error.response.status === 401) {
+                            showToast('error' , 'bi bi-info-circle', 'Add failed! You are not log in yet.');
+                        }
+                    }
+                    if (error.message === 'Network Error') {
+                        showToast('error' , 'bi bi-info-circle', 'Add failed! Network error.');
+                    }
+                    else {
+                        showToast('error' , 'bi bi-info-circle', error.message);
+                    }
+                })
+        } catch (error) {
+            if (error.response !== undefined) {
+                if (error.response.status === 401) {
+                    showToast('error' , 'bi bi-info-circle', 'Add failed! You are not log in yet.');
+                }
+            }
+            if (error.message === 'Network Error') {
+                showToast('error' , 'bi bi-info-circle', 'Add failed! Network error.');
+            }
+            else {
+                showToast('error' , 'bi bi-info-circle', error.message);
+            }
+        }
     }
 
     return isLogged ? <Redirect to="/sign-in" /> : (
@@ -450,7 +615,7 @@ const UserProfile = () => {
                                 <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" className="rounded-circle" width="150" />
                                 <div className="mt-3">
                                     <h4>{userProfile ? userProfile.first_name + ' ' + userProfile.last_name : 'Veinz Tran'}</h4>
-                                    <p className="text-secondary mb-1 text-left"><strong>Bio: </strong>{userProfile ? userProfile.bio : 'bio'}</p>
+                                    <p className="text-secondary mb-1 text-left text-hidden-over"><strong>Bio: </strong>{userProfile ? userProfile.bio : 'bio'}</p>
                                     <p className="text-muted font-size-sm text-justify"><strong>Address: </strong>{userProfile ? userProfile.address : 'Bay Area, San Francisco, CA'}</p>
                                 </div>
                             </div>
@@ -633,6 +798,80 @@ const UserProfile = () => {
                                 </div>
                             }
                             </div>
+                        </div>
+                    </div>
+                    <div className="card mb-3">
+                        <div className="card-header">
+                            <h5>ADD EMPLOYEE</h5>
+                        </div>
+                        <div className="card-body">
+                            
+                            <div className="row">
+                                <div className="col-sm-3 d-flex align-items-center">
+                                    <h6 className="mb-0">User</h6>
+                                </div>
+                                <div className="col-sm-9 text-secondary text-left">
+                                    <div className="input-group mb-3">
+                                        <input type="text" value={userId} onChange={e => setUserId(e.target.value)} className="form-control" name="user_e_id" placeholder="User Id" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-sm-3 d-flex align-items-center">
+                                    <h6 className="mb-0">Role</h6>
+                                </div>
+                                <div className="col-sm-9 text-secondary text-left">
+                                    <select className="form-select" value={role} onChange={e => setRole(e.target.value)}>
+                                        <option value="2">HR</option>
+                                        <option value="3">Content/Writer</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="col-sm-12 mt-3">
+                                <button type="button" className="btn btn-info br-6" onClick={() => addEmployee()}>Add</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="card mb-3">
+                        <div className="card-header">
+                            <h5>LIST EMPLOYEE</h5>
+                        </div>
+                        <div className="card-body">
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">First name</th>
+                                        <th scope="col">Last name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Role</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {members ? 
+                                        members.length > 0 ? 
+                                            members.map((e, i) => ( 
+                                                <tr key={makeid(4)}>
+                                                    <th scope="row">{i+ 1}</th>
+                                                    <td>{e.first_name}</td>
+                                                    <td>{e.last_name}</td>
+                                                    <td>{e.email}</td>
+                                                    <td>{e.roles[0].role_name}</td>
+                                                </tr>
+                                            ))
+                                        :
+                                        <tr>
+                                            <td colSpan="5">Not found any members</td>
+                                        </tr>
+                                    :
+                                    <tr>
+                                        <td colSpan="5">Not found any members</td>
+                                    </tr>
+                                    }
+                                    
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div> : 
@@ -1001,7 +1240,7 @@ const UserProfile = () => {
                                                 recruitmentNews.map((e, i) => {
                                                     return <div key={e.id + '__rn__'} className="d-flex justify-content-between mb-3">
                                                         <div>{e.title}</div>
-                                                        <button className="btn br-6 btn-outline-secondary">Edit</button>
+                                                        <button type="button" data-bs-toggle="modal" data-bs-target="#showCandidateModal" onClick={() => showCandidate(e.id)} className="btn br-6 btn-outline-secondary">Candidates</button>
                                                     </div>
                                                 })
                                             : <small><i>Not found any recruitment news</i></small>
@@ -1022,7 +1261,7 @@ const UserProfile = () => {
                                                 recruitmentNews.map((e, i) => {
                                                     return <div key={e.id + '__rn__'} className="d-flex justify-content-between mb-3">
                                                         <div>{e.title}</div>
-                                                        <button className="btn br-6 btn-outline-secondary">Edit</button>
+                                                        <button type="button" data-bs-toggle="modal" data-bs-target="#showCandidateModal" onClick={() => showCandidate(e.id)} className="btn br-6 btn-outline-secondary">Candidates</button>
                                                     </div>
                                                 })
                                             : <small><i>Not found any recruitment news</i></small>
@@ -1080,10 +1319,88 @@ const UserProfile = () => {
                             </div>
                         </div>
                     </div>
-
-                    
                 </div>
             }
+                <div className="modal fade" id="showCandidateModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">{titleModal}</h5>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div className="modal-body">
+                                <table className="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">First name</th>
+                                            <th scope="col">Last name</th>
+                                            <th scope="col">Phone</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Exp Years</th>
+                                            <th scope="col">CV</th>
+                                            <th scope="col">Cover letter</th>
+                                            <th scope="col">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {
+                                        permission ? 
+                                        candidates !== null ? 
+                                            candidates.length > 0 ?
+                                                candidates.map((e, i) => (
+                                                    <tr key={i + makeid(3)}>
+                                                        <td>{i+1}</td>
+                                                        <td>{e.first_name}</td>
+                                                        <td>{e.last_name}</td>
+                                                        <td>{e.phone}</td>
+                                                        <td>{e.email}</td>
+                                                        <td>{e.pivot.exp_years}</td>
+                                                        <td>{e.pivot.cv_path}</td>
+                                                        <td>{e.pivot.cover_letter_path}</td>
+                                                        <td>
+                                                        {e.pivot.is_elect === 1 ? <span className="text-success">Confirmed</span> : 
+                                                            <div className="dropdown">
+                                                                <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    Pending
+                                                                </button>
+                                                                <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                                    {e.pivot.is_elect === 0 && 
+                                                                        <li><button onClick={() => confirmJobseeker(e.pivot)} className="dropdown-item text-info" href="#">Confirm</button></li>
+                                                                    }
+                                                                </ul>
+                                                            </div>
+                                                        }
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            : <tr>
+                                                <td colSpan="9">
+                                                    Not found any candidates for this recruitment news
+                                                </td>
+                                            </tr>
+                                        : <tr>
+                                            <td colSpan="9">
+                                                Not found any candidates for this recruitment news
+                                            </td>
+                                        </tr>
+                                        :
+                                        <tr>
+                                            <td colSpan="9" className="text-danger">
+                                                Your permission not enough to show this information
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" className="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div id="toast"><div id="img"><i className={toastIcon}></i></div><div id="desc">{toastMessage}</div></div>
         </div>

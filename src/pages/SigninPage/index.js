@@ -41,9 +41,9 @@ const SignIn = () => {
                     }
                 })
                 .catch(function (error) {
-                    console.log("LOGIN: FAILED");
+                    // console.log("LOGIN: FAILED");
                     // console.log(error);
-                    console.log(typeof (error.response));
+                    // console.log(typeof (error.response));
                     if (typeof (error.response) != 'undefined') {
                         switch (error.response.status) {
                             case 422:
@@ -73,11 +73,11 @@ const SignIn = () => {
     }
 
     useEffect(() => {
-        console.log("RUNNED");
+        // console.log("RUNNED");
         const cancelTokenSource = axios.CancelToken.source();
 
-        console.log("hi");
-        console.log(localLoginStatus);
+        // console.log("hi");
+        // console.log(localLoginStatus);
         if (!localLoginStatus) {
             axios.post(API.CHECK_VALID_TOKEN, null,
                 {
@@ -86,7 +86,7 @@ const SignIn = () => {
                 })
                 .then(async function (response) {
                     if (response.status == 200) {
-                        console.log(" HAHAHAHAHA SUCCESS | NEED NAV LINK TO HOME");
+                        // console.log(" HAHAHAHAHA SUCCESS | NEED NAV LINK TO HOME");
                         setIsLogged(true);
                         setLocalLoginStatus(true);
                     }

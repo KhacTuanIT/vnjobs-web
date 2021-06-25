@@ -41,7 +41,7 @@ const JobsPage = () => {
             
                 return tempJob;
             } catch (error) {
-                console.log(error.message);
+                // console.log(error.message);
                 setTimeout(() => {
                     setIsGetting(false);
                 }, 700);
