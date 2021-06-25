@@ -204,3 +204,15 @@
 .card-body h6 {
     color: #333;
 }
+
+@media (min-width: 576px){
+    .modal-dialog {
+        max-width: 1920px;
+        margin: 1.75rem auto;
+    }
+}
+
+
+.text-hidden-over {
+    overflow-x: hidden;
+}

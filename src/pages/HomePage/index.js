@@ -136,13 +136,24 @@ const HomePage = () => {
                 : 'Expired'
     }
 
+    function makeid(length) {
+        var result           = '';
+        var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for ( var i = 0; i < length; i++ ) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+       }
+       return result;
+    }
+
+
     return (
         <div>
             <div className="search-form">
                 <div className="title-ic">Tìm kiếm công việc ngay </div>
                 <div className="d-flex justify-content-center container search-home">
                     <input type="text" className="search-item text-search w-50" onChange={t => (setTitleSearch(t.target.value))} placeholder="Tên công việc" />
-                    <select class="search-item city-select form-select w-25" value={citySearch} onChange={e => { setCitySearch(e.target.value) }}>
+                    <select className="search-item city-select form-select w-25" value={citySearch} onChange={e => { setCitySearch(e.target.value) }}>
                         <option value="">Thành phố...</option>
                         <option value="Hà Nội">Hà Nội</option>
                         <option value="Đà Nẵng">Đà Nẵng</option>
@@ -154,7 +165,7 @@ const HomePage = () => {
                 <div className="list-major-recommend d-flex justify-content-center container">
                     {
                         majors.map(item => (
-                            <div onClick={() => {
+                            <div key={makeid(4)} onClick={() => {
                                 searchWithMajor(item.major_name);
                             }} className="major-rec-item">{item.major_name}</div>
                         ))
@@ -173,7 +184,7 @@ const HomePage = () => {
                                 job.data !== undefined ?
                                     job.data.length > 0 ?
                                         job.data.map((e, i) => {
-                                            return <div key={e.id} className="link-item">
+                                            return <div key={makeid(4)} className="link-item">
                                                 <div className="job-item">
                                                     <div className="title-job-item">
                                                         <img src="images/logo_official.png" />
@@ -198,9 +209,9 @@ const HomePage = () => {
                                             </div>
                                         }) :
                                         <div className="d-flex justify-content-center flex-row">
-                                            <div class="err">4</div>
-                                            <div className="f"><i class="far fa-question-circle fa-spin"></i></div>
-                                            <div class="err2">4</div>
+                                            <div className="err">4</div>
+                                            <div className="f"><i className="far fa-question-circle fa-spin"></i></div>
+                                            <div className="err2">4</div>
                                         </div>
                                     : <div className="d-flex justify-content-center">
                                         <div className="spinner-grow" role="status mr-3">

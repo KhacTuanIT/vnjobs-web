@@ -21,3 +21,6 @@ export const APPLY = API + 'users/apply';
 export const SEARCH = API + 'search';
 export const LIST_APPLIED_JOBS = API + 'user/applied';
 export const FIND_ORGANIZATION_BY_ID = LIST_ORGANIZATION + '/find-by-id';
+export const LIST_JOBSEEKER_BY_RECRUITMENT_NEWS = API + 'recruitment-news-job-seekers'
+export const LIST_JOBSEEKER = API + 'job-seekers';
+export const MEMBERSHIP = LIST_ORGANIZATION + '/membership';
